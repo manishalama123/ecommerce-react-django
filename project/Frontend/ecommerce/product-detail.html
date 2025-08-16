@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Details — Luxe E-commerce</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="min-h-screen bg-white">
+    <!-- Header -->
+    <header class="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <a href="index.html" class="text-2xl font-bold text-slate-900 hover:text-amber-600 transition-colors duration-200">Luxe</a>
+                    </div>
+                </div>
+
+                <nav class="hidden md:flex space-x-8">
+                    <a href="index.html" class="text-slate-700 hover:text-slate-900 transition-colors duration-200">Home</a>
+                    <a href="products.html" class="text-slate-700 hover:text-slate-900 transition-colors duration-200">Products</a>
+                    <a href="about.html" class="text-slate-700 hover:text-slate-900 transition-colors duration-200">About</a>
+                    <a href="contact.html" class="text-slate-700 hover:text-slate-900 transition-colors duration-200">Contact</a>
+                </nav>
+
+                <div class="flex items-center space-x-4">
+                    <a href="cart.html" class="relative p-2 text-slate-600 hover:text-slate-900 transition-colors duration-200">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+                            <line x1="3" y1="6" x2="21" y2="6"></line>
+                            <path d="M16 10a4 4 0 0 1-8 0"></path>
+                        </svg>
+                        <span id="cartCount" class="absolute -top-1 -right-1 bg-amber-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center hidden">0</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Breadcrumb -->
+    <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+        <ol class="flex items-center space-x-2 text-sm">
+            <li><a href="index.html" class="text-slate-600 hover:text-slate-900">Home</a></li>
+            <li class="text-slate-400">/</li>
+            <li><a href="products.html" class="text-slate-600 hover:text-slate-900">Products</a></li>
+            <li class="text-slate-400">/</li>
+            <li class="text-slate-900 font-medium" id="breadcrumbProduct">Product</li>
+        </ol>
+    </nav>
+
+    <!-- Product Detail -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+            <!-- Product Images -->
+            <div class="space-y-4">
+                <div class="aspect-square bg-slate-100 rounded-2xl overflow-hidden">
+                    <img id="mainImage" src="" alt="" class="w-full h-full object-cover">
+                </div>
+                <div class="grid grid-cols-4 gap-4">
+                    <div class="aspect-square bg-slate-100 rounded-lg overflow-hidden cursor-pointer opacity-50 hover:opacity-100 transition-opacity" onclick="changeMainImage(this)">
+                        <img src="" alt="" class="w-full h-full object-cover">
+                    </div>
+                    <div class="aspect-square bg-slate-100 rounded-lg overflow-hidden cursor-pointer opacity-50 hover:opacity-100 transition-opacity" onclick="changeMainImage(this)">
+                        <img src="" alt="" class="w-full h-full object-cover">
+                    </div>
+                    <div class="aspect-square bg-slate-100 rounded-lg overflow-hidden cursor-pointer opacity-50 hover:opacity-100 transition-opacity" onclick="changeMainImage(this)">
+                        <img src="" alt="" class="w-full h-full object-cover">
+                    </div>
+                    <div class="aspect-square bg-slate-100 rounded-lg overflow-hidden cursor-pointer opacity-50 hover:opacity-100 transition-opacity" onclick="changeMainImage(this)">
+                        <img src="" alt="" class="w-full h-full object-cover">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Product Info -->
+            <div class="space-y-6">
+                <div>
+                    <h1 id="productName" class="text-3xl font-bold text-slate-900 mb-2"></h1>
+                    <div class="flex items-center space-x-4 mb-4">
+                        <div class="flex items-center space-x-1">
+                            <div class="flex space-x-1" id="ratingStars">
+                                <!-- Stars will be populated by JavaScript -->
+                            </div>
+                            <span id="productRating" class="text-sm font-medium text-slate-700"></span>
+                        </div>
+                        <span id="reviewCount" class="text-sm text-slate-500"></span>
+                    </div>
+                    <div class="flex items-center space-x-3 mb-6">
+                        <span id="productPrice" class="text-3xl font-bold text-slate-900"></span>
+                        <span id="originalPrice" class="text-xl text-slate-500 line-through hidden"></span>
+                        <span id="discountBadge" class="px-3 py-1 bg-red-100 text-red-800 text-sm font-medium rounded-full hidden"></span>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="text-lg font-semibold text-slate-900 mb-3">Description</h3>
+                    <p id="productDescription" class="text-slate-600 leading-relaxed"></p>
+                </div>
+
+                <div>
+                    <h3 class="text-lg font-semibold text-slate-900 mb-3">Features</h3>
+                    <ul id="productFeatures" class="space-y-2 text-slate-600">
+                        <!-- Features will be populated by JavaScript -->
+                    </ul>
+                </div>
+
+                <!-- Quantity & Add to Cart -->
+                <div class="space-y-4 border-t border-slate-200 pt-6">
+                    <div class="flex items-center space-x-4">
+                        <label class="text-sm font-medium text-slate-900">Quantity:</label>
+                        <div class="flex items-center border border-slate-300 rounded-lg">
+                            <button onclick="decreaseQuantity()" class="p-2 hover:bg-slate-50 transition-colors">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                                </svg>
+                            </button>
+                            <input type="number" id="quantity" value="1" min="1" class="w-16 text-center border-0 focus:ring-0 focus:outline-none">
+                            <button onclick="increaseQuantity()" class="p-2 hover:bg-slate-50 transition-colors">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col sm:flex-row gap-4">
+                        <button onclick="addToCart()" class="flex-1 bg-amber-500 hover:bg-amber-600 text-white px-8 py-4 rounded-lg font-semibold transition-colors duration-200 flex items-center justify-center space-x-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+                                <line x1="3" y1="6" x2="21" y2="6"></line>
+                                <path d="M16 10a4 4 0 0 1-8 0"></path>
+                            </svg>
+                            <span>Add to Cart</span>
+                        </button>
+                        <button class="flex-1 bg-slate-900 hover:bg-slate-800 text-white px-8 py-4 rounded-lg font-semibold transition-colors duration-200">
+                            Buy Now
+                        </button>
+                    </div>
+
+                    <button class="w-full border border-slate-300 hover:border-slate-400 text-slate-700 px-8 py-3 rounded-lg font-medium transition-colors duration-200 flex items-center justify-center space-x-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                        </svg>
+                        <span>Add to Wishlist</span>
+                    </button>
+                </div>
+
+                <!-- Product Info -->
+                <div class="border-t border-slate-200 pt-6">
+                    <dl class="grid grid-cols-1 gap-4 text-sm">
+                        <div class="flex justify-between">
+                            <dt class="font-medium text-slate-900">SKU:</dt>
+                            <dd id="productSku" class="text-slate-600"></dd>
+                        </div>
+                        <div class="flex justify-between">
+                            <dt class="font-medium text-slate-900">Category:</dt>
+                            <dd id="productCategory" class="text-slate-600 capitalize"></dd>
+                        </div>
+                        <div class="flex justify-between">
+                            <dt class="font-medium text-slate-900">Availability:</dt>
+                            <dd class="text-green-600 font-medium">In Stock</dd>
+                        </div>
+                        <div class="flex justify-between">
+                            <dt class="font-medium text-slate-900">Shipping:</dt>
+                            <dd class="text-slate-600">Free shipping on orders over $50</dd>
+                        </div>
+                    </dl>
+                </div>
+            </div>
+        </div>
+
+        <!-- Product Reviews -->
+        <div class="mt-16 border-t border-slate-200 pt-16">
+            <h2 class="text-2xl font-bold text-slate-900 mb-8">Customer Reviews</h2>
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div class="lg:col-span-1">
+                    <div class="bg-slate-50 rounded-2xl p-6">
+                        <div class="text-center">
+                            <div class="text-4xl font-bold text-slate-900 mb-2" id="averageRating"></div>
+                            <div class="flex justify-center space-x-1 mb-2" id="averageRatingStars">
+                                <!-- Stars will be populated by JavaScript -->
+                            </div>
+                            <p class="text-slate-600" id="totalReviews"></p>
+                        </div>
+                        <div class="mt-6 space-y-3">
+                            <div class="flex items-center space-x-3">
+                                <span class="text-sm text-slate-600">5 stars</span>
+                                <div class="flex-1 bg-slate-200 rounded-full h-2">
+                                    <div class="bg-amber-400 h-2 rounded-full" style="width: 65%"></div>
+                                </div>
+                                <span class="text-sm text-slate-600 w-8">65%</span>
+                            </div>
+                            <div class="flex items-center space-x-3">
+                                <span class="text-sm text-slate-600">4 stars</span>
+                                <div class="flex-1 bg-slate-200 rounded-full h-2">
+                                    <div class="bg-amber-400 h-2 rounded-full" style="width: 25%"></div>
+                                </div>
+                                <span class="text-sm text-slate-600 w-8">25%</span>
+                            </div>
+                            <div class="flex items-center space-x-3">
+                                <span class="text-sm text-slate-600">3 stars</span>
+                                <div class="flex-1 bg-slate-200 rounded-full h-2">
+                                    <div class="bg-amber-400 h-2 rounded-full" style="width: 8%"></div>
+                                </div>
+                                <span class="text-sm text-slate-600 w-8">8%</span>
+                            </div>
+                            <div class="flex items-center space-x-3">
+                                <span class="text-sm text-slate-600">2 stars</span>
+                                <div class="flex-1 bg-slate-200 rounded-full h-2">
+                                    <div class="bg-amber-400 h-2 rounded-full" style="width: 2%"></div>
+                                </div>
+                                <span class="text-sm text-slate-600 w-8">2%</span>
+                            </div>
+                            <div class="flex items-center space-x-3">
+                                <span class="text-sm text-slate-600">1 star</span>
+                                <div class="flex-1 bg-slate-200 rounded-full h-2">
+                                    <div class="bg-amber-400 h-2 rounded-full" style="width: 0%"></div>
+                                </div>
+                                <span class="text-sm text-slate-600 w-8">0%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-2 space-y-6">
+                    <!-- Sample Reviews -->
+                    <div class="border border-slate-200 rounded-xl p-6">
+                        <div class="flex items-start space-x-4">
+                            <div class="w-10 h-10 bg-amber-100 rounded-full flex items-center justify-center">
+                                <span class="text-sm font-medium text-amber-700">JS</span>
+                            </div>
+                            <div class="flex-1">
+                                <div class="flex items-center space-x-2 mb-2">
+                                    <h4 class="font-medium text-slate-900">John Smith</h4>
+                                    <div class="flex space-x-1">
+                                        <svg class="w-4 h-4 fill-amber-400 text-amber-400" viewBox="0 0 24 24">
+                                            <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"></polygon>
+                                        </svg>
+                                        <svg class="w-4 h-4 fill-amber-400 text-amber-400" viewBox="0 0 24 24">
+                                            <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"></polygon>
+                                        </svg>
+                                        <svg class="w-4 h-4 fill-amber-400 text-amber-400" viewBox="0 0 24 24">
+                                            <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"></polygon>
+                                        </svg>
+                                        <svg class="w-4 h-4 fill-amber-400 text-amber-400" viewBox="0 0 24 24">
+                                            <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"></polygon>
+                                        </svg>
+                                        <svg class="w-4 h-4 fill-amber-400 text-amber-400" viewBox="0 0 24 24">
+                                            <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"></polygon>
+                                        </svg>
+                                    </div>
+                                    <span class="text-sm text-slate-500">2 days ago</span>
+                                </div>
+                                <p class="text-slate-600">Excellent product! The quality exceeded my expectations and it arrived quickly. Highly recommend this item to anyone looking for premium quality.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="border border-slate-200 rounded-xl p-6">
+                        <div class="flex items-start space-x-4">
+                            <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                                <span class="text-sm font-medium text-blue-700">AM</span>
+                            </div>
+                            <div class="flex-1">
+                                <div class="flex items-center space-x-2 mb-2">
+                                    <h4 class="font-medium text-slate-900">Alice Miller</h4>
+                                    <div class="flex space-x-1">
+                                        <svg class="w-4 h-4 fill-amber-400 text-amber-400" viewBox="0 0 24 24">
+                                            <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"></polygon>
+                                        </svg>
+                                        <svg class="w-4 h-4 fill-amber-400 text-amber-400" viewBox="0 0 24 24">
+                                            <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"></polygon>
+                                        </svg>
+                                        <svg class="w-4 h-4 fill-amber-400 text-amber-400" viewBox="0 0 24 24">
+                                            <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"></polygon>
+                                        </svg>
+                                        <svg class="w-4 h-4 fill-amber-400 text-amber-400" viewBox="0 0 24 24">
+                                            <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"></polygon>
+                                        </svg>
+                                        <svg class="w-4 h-4 fill-slate-300 text-slate-300" viewBox="0 0 24 24">
+                                            <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"></polygon>
+                                        </svg>
+                                    </div>
+                                    <span class="text-sm text-slate-500">1 week ago</span>
+                                </div>
+                                <p class="text-slate-600">Great design and functionality. The only minor issue is the packaging could be improved, but the product itself is fantastic.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="border border-slate-200 rounded-xl p-6">
+                        <div class="flex items-start space-x-4">
+                            <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+                                <span class="text-sm font-medium text-green-700">MJ</span>
+                            </div>
+                            <div class="flex-1">
+                                <div class="flex items-center space-x-2 mb-2">
+                                    <h4 class="font-medium text-slate-900">Mike Johnson</h4>
+                                    <div class="flex space-x-1">
+                                        <svg class="w-4 h-4 fill-amber-400 text-amber-400" viewBox="0 0 24 24">
+                                            <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"></polygon>
+                                        </svg>
+                                        <svg class="w-4 h-4 fill-amber-400 text-amber-400" viewBox="0 0 24 24">
+                                            <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"></polygon>
+                                        </svg>
+                                        <svg class="w-4 h-4 fill-amber-400 text-amber-400" viewBox="0 0 24 24">
+                                            <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"></polygon>
+                                        </svg>
+                                        <svg class="w-4 h-4 fill-amber-400 text-amber-400" viewBox="0 0 24 24">
+                                            <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"></polygon>
+                                        </svg>
+                                        <svg class="w-4 h-4 fill-amber-400 text-amber-400" viewBox="0 0 24 24">
+                                            <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"></polygon>
+                                        </svg>
+                                    </div>
+                                    <span class="text-sm text-slate-500">2 weeks ago</span>
+                                </div>
+                                <p class="text-slate-600">Perfect! Exactly what I was looking for. The quality is outstanding and it looks even better in person. Will definitely order again.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        
+
+        <!-- Related Products -->
+        <div class="mt-16 border-t border-slate-200 pt-16">
+            <h2 class="text-2xl font-bold text-slate-900 mb-8">You Might Also Like</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6" id="relatedProducts">
+                <!-- Related products will be populated by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 py-12 mt-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <h4 class="text-2xl font-bold text-slate-900 mb-4">Luxe</h4>
+                    <p class="text-slate-600">Premium lifestyle products for the modern individual.</p>
+                </div>
+                <div>
+                    <h5 class="font-semibold text-slate-900 mb-4">Shop</h5>
+                    <ul class="space-y-2 text-slate-600">
+                        <li><a href="products.html" class="hover:text-slate-900 transition-colors">All Products</a></li>
+                        <li><a href="products.html?category=electronics" class="hover:text-slate-900 transition-colors">Electronics</a></li>
+                        <li><a href="products.html?category=accessories" class="hover:text-slate-900 transition-colors">Accessories</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h5 class="font-semibold text-slate-900 mb-4">Support</h5>
+                    <ul class="space-y-2 text-slate-600">
+                        <li><a href="contact.html" class="hover:text-slate-900 transition-colors">Contact</a></li>
+                        <li><a href="faq.html" class="hover:text-slate-900 transition-colors">FAQ</a></li>
+                        <li><a href="shipping.html" class="hover:text-slate-900 transition-colors">Shipping</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h5 class="font-semibold text-slate-900 mb-4">Company</h5>
+                    <ul class="space-y-2 text-slate-600">
+                        <li><a href="about.html" class="hover:text-slate-900 transition-colors">About</a></li>
+                        <li><a href="careers.html" class="hover:text-slate-900 transition-colors">Careers</a></li>
+                        <li><a href="privacy.html" class="hover:text-slate-900 transition-colors">Privacy</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-slate-200 mt-8 pt-8 text-center text-slate-600">
+                <p>&copy; 2024 Luxe. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Products data
+        const products = [
+            {
+                id: 1,
+                name: 'Minimalist Watch',
+                price: 299,
+                originalPrice: 399,
+                image: 'https://images.pexels.com/photos/190819/pexels-photo-190819.jpeg?auto=compress&cs=tinysrgb&w=400',
+                images: [
+                    'https://images.pexels.com/photos/190819/pexels-photo-190819.jpeg?auto=compress&cs=tinysrgb&w=400',
+                    'https://images.pexels.com/photos/277390/pexels-photo-277390.jpeg?auto=compress&cs=tinysrgb&w=400',
+                    'https://images.pexels.com/photos/125779/pexels-photo-125779.jpeg?auto=compress&cs=tinysrgb&w=400',
+                    'https://images.pexels.com/photos/364673/pexels-photo-364673.jpeg?auto=compress&cs=tinysrgb&w=400'
+                ],
+                category: 'accessories',
+                rating: 4.8,
+                reviewCount: 124,
+                description: 'A sleek and modern minimalist watch that combines timeless design with precision craftsmanship. Perfect for both casual and formal occasions.',
+                features: [
+                    'Swiss quartz movement for precise timekeeping',
+                    'Stainless steel case with scratch-resistant coating',
+                    'Water-resistant up to 50 meters',
+                    'Genuine leather strap with quick-release pins',
+                    'Minimalist dial design with luminous hands',
+                    '2-year manufacturer warranty'
+                ],
+                sku: 'LUX-WATCH-001'
+            },
+            {
+                id: 2,
+                name: 'Wireless Headphones',
+                price: 199,
+                originalPrice: 249,
+                image: 'https://images.pexels.com/photos/3394650/pexels-photo-3394650.jpeg?auto=compress&cs=tinysrgb&w=400',
+                images: [
+                    'https://images.pexels.com/photos/3394650/pexels-photo-3394650.jpeg?auto=compress&cs=tinysrgb&w=400',
+                    'https://images.pexels.com/photos/1649771/pexels-photo-1649771.jpeg?auto=compress&cs=tinysrgb&w=400',
+                    'https://images.pexels.com/photos/3945667/pexels-photo-3945667.jpeg?auto=compress&cs=tinysrgb&w=400',
+                    'https://images.pexels.com/photos/4226140/pexels-photo-4226140.jpeg?auto=compress&cs=tinysrgb&w=400'
+                ],
+                category: 'electronics',
+                rating: 4.9,
+                reviewCount: 89,
+                description: 'Premium wireless headphones with superior sound quality and comfortable design for all-day wear. Features active noise cancellation and long battery life.',
+                features: [
+                    'Active noise cancellation technology',
+                    '30-hour battery life with quick charge',
+                    'Premium drivers for exceptional sound quality',
+                    'Comfortable over-ear design with memory foam',
+                    'Bluetooth 5.0 connectivity',
+                    'Built-in microphone for hands-free calls'
+                ],
+                sku: 'LUX-AUDIO-002'
+            },
+            {
+                id: 3,
+                name: 'Designer Backpack',
+                price: 159,
+                image: 'https://images.pexels.com/photos/2905238/pexels-photo-2905238.jpeg?auto=compress&cs=tinysrgb&w=400',
+                images: [
+                    'https://images.pexels.com/photos/2905238/pexels-photo-2905238.jpeg?auto=compress&cs=tinysrgb&w=400',
+                    'https://images.pexels.com/photos/1058959/pexels-photo-1058959.jpeg?auto=compress&cs=tinysrgb&w=400',
+                    'https://images.pexels.com/photos/2422915/pexels-photo-2422915.jpeg?auto=compress&cs=tinysrgb&w=400',
+                    'https://images.pexels.com/photos/1152077/pexels-photo-1152077.jpeg?auto=compress&cs=tinysrgb&w=400'
+                ],
+                category: 'bags',
+                rating: 4.7,
+                reviewCount: 203,
+                description: 'A versatile designer backpack perfect for work, travel, and everyday adventures. Made from premium materials with thoughtful organization.',
+                features: [
+                    'Premium water-resistant canvas material',
+                    'Laptop compartment fits up to 15-inch devices',
+                    'Multiple organizational pockets and compartments',
+                    'Padded shoulder straps for comfort',
+                    'Durable YKK zippers throughout',
+                    'Lifetime craftsmanship guarantee'
+                ],
+                sku: 'LUX-BAG-003'
+            },
+            {
+                id: 4,
+                name: 'Smart Fitness Tracker',
+                price: 129,
+                originalPrice: 179,
+                image: 'https://images.pexels.com/photos/437037/pexels-photo-437037.jpeg?auto=compress&cs=tinysrgb&w=400',
+                images: [
+                    'https://images.pexels.com/photos/437037/pexels-photo-437037.jpeg?auto=compress&cs=tinysrgb&w=400',
+                    'https://images.pexels.com/photos/4498362/pexels-photo-4498362.jpeg?auto=compress&cs=tinysrgb&w=400',
+                    'https://images.pexels.com/photos/4498318/pexels-photo-4498318.jpeg?auto=compress&cs=tinysrgb&w=400',
+                    'https://images.pexels.com/photos/4498323/pexels-photo-4498323.jpeg?auto=compress&cs=tinysrgb&w=400'
+                ],
+                category: 'electronics',
+                rating: 4.6,
+                reviewCount: 156,
+                description: 'Track your fitness goals with this advanced smart fitness tracker featuring heart rate monitoring, GPS, and comprehensive health insights.',
+                features: [
+                    '24/7 heart rate monitoring',
+                    'Built-in GPS for accurate tracking',
+                    'Sleep quality analysis and insights',
+                    '7-day battery life',
+                    'Water-resistant up to 50 meters',
+                    'Compatible with iOS and Android'
+                ],
+                sku: 'LUX-FIT-004'
+            }
+        ];
+
+        let currentProduct = null;
+
+        function getProductIdFromUrl() {
+            const urlParams = new URLSearchParams(window.location.search);
+            return parseInt(urlParams.get('id'));
+        }
+
+        function loadProduct() {
+            const productId = getProductIdFromUrl();
+            currentProduct = products.find(p => p.id === productId);
+            
+            if (!currentProduct) {
+                // Redirect to products page if product not found
+                window.location.href = 'products.html';
+                return;
+            }
+
+            // Update page title and breadcrumb
+            document.title = `${currentProduct.name} — Luxe E-commerce`;
+            document.getElementById('breadcrumbProduct').textContent = currentProduct.name;
+
+            // Update product info
+            document.getElementById('productName').textContent = currentProduct.name;
+            document.getElementById('productPrice').textContent = `$${currentProduct.price}`;
+            document.getElementById('productDescription').textContent = currentProduct.description;
+            document.getElementById('productSku').textContent = currentProduct.sku;
+            document.getElementById('productCategory').textContent = currentProduct.category;
+            document.getElementById('productRating').textContent = currentProduct.rating;
+            document.getElementById('reviewCount').textContent = `(${currentProduct.reviewCount} reviews)`;
+
+            // Handle original price and discount
+            if (currentProduct.originalPrice) {
+                const originalPriceEl = document.getElementById('originalPrice');
+                const discountBadgeEl = document.getElementById('discountBadge');
+                originalPriceEl.textContent = `$${currentProduct.originalPrice}`;
+                originalPriceEl.classList.remove('hidden');
+                
+                const discount = Math.round(((currentProduct.originalPrice - currentProduct.price) / currentProduct.originalPrice) * 100);
+                discountBadgeEl.textContent = `${discount}% OFF`;
+                discountBadgeEl.classList.remove('hidden');
+            }
+
+            // Update images
+            const mainImage = document.getElementById('mainImage');
+            mainImage.src = currentProduct.image;
+            mainImage.alt = currentProduct.name;
+
+            const thumbnails = document.querySelectorAll('.grid.grid-cols-4 img');
+            thumbnails.forEach((thumb, index) => {
+                if (currentProduct.images && currentProduct.images[index]) {
+                    thumb.src = currentProduct.images[index];
+                    thumb.alt = `${currentProduct.name} view ${index + 1}`;
+                    thumb.parentElement.style.display = 'block';
+                } else {
+                    thumb.parentElement.style.display = 'none';
+                }
+            });
+
+            // Set first thumbnail as active
+            if (thumbnails.length > 0) {
+                thumbnails[0].parentElement.classList.remove('opacity-50');
+                thumbnails[0].parentElement.classList.add('opacity-100', 'ring-2', 'ring-amber-500');
+            }
+
+            // Update rating stars
+            updateRatingStars('ratingStars', currentProduct.rating);
+            updateRatingStars('averageRatingStars', currentProduct.rating);
+            document.getElementById('averageRating').textContent = currentProduct.rating;
+            document.getElementById('totalReviews').textContent = `Based on ${currentProduct.reviewCount} reviews`;
+
+            // Update features
+            const featuresEl = document.getElementById('productFeatures');
+            featuresEl.innerHTML = '';
+            currentProduct.features.forEach(feature => {
+                const li = document.createElement('li');
+                li.className = 'flex items-start space-x-2';
+                li.innerHTML = `
+                    <svg class="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                    <span>${feature}</span>
+                `;
+                featuresEl.appendChild(li);
+            });
+
+            // Load related products
+            loadRelatedProducts();
+        }
+
+        function updateRatingStars(containerId, rating) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = '';
+            
+            for (let i = 1; i <= 5; i++) {
+                const star = document.createElement('svg');
+                star.className = `w-4 h-4 ${i <= Math.floor(rating) ? 'fill-amber-400 text-amber-400' : 'fill-slate-300 text-slate-300'}`;
+                star.setAttribute('viewBox', '0 0 24 24');
+                star.innerHTML = '<polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"></polygon>';
+                container.appendChild(star);
+            }
+        }
+
+        function changeMainImage(thumbnail) {
+            const mainImage = document.getElementById('mainImage');
+            mainImage.src = thumbnail.querySelector('img').src;
+            
+            // Update active thumbnail
+            document.querySelectorAll('.grid.grid-cols-4 > div').forEach(thumb => {
+                thumb.classList.add('opacity-50');
+                thumb.classList.remove('opacity-100', 'ring-2', 'ring-amber-500');
+            });
+            
+            thumbnail.classList.remove('opacity-50');
+            thumbnail.classList.add('opacity-100', 'ring-2', 'ring-amber-500');
+        }
+
+        function increaseQuantity() {
+            const quantityInput = document.getElementById('quantity');
+            quantityInput.value = parseInt(quantityInput.value) + 1;
+        }
+
+        function decreaseQuantity() {
+            const quantityInput = document.getElementById('quantity');
+            const currentValue = parseInt(quantityInput.value);
+            if (currentValue > 1) {
+                quantityInput.value = currentValue - 1;
+            }
+        }
+
+        function addToCart() {
+            if (!currentProduct) return;
+
+            const quantity = parseInt(document.getElementById('quantity').value);
+            let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+            const existingItem = cart.find(item => item.id === currentProduct.id);
+            
+            if (existingItem) {
+                existingItem.quantity += quantity;
+            } else {
+                cart.push({ ...currentProduct, quantity: quantity });
+            }
+            
+            localStorage.setItem('cart', JSON.stringify(cart));
+            updateCartCount();
+            
+            showNotification(`${currentProduct.name} (${quantity}) added to cart!`, 'success');
+        }
+
+        function loadRelatedProducts() {
+            const relatedContainer = document.getElementById('relatedProducts');
+            const relatedProducts = products.filter(p => 
+                p.id !== currentProduct.id && 
+                (p.category === currentProduct.category || Math.random() > 0.5)
+            ).slice(0, 4);
+
+            relatedContainer.innerHTML = '';
+            relatedProducts.forEach(product => {
+                const productCard = document.createElement('div');
+                productCard.className = 'group bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 overflow-hidden border border-slate-100';
+                productCard.innerHTML = `
+                    <div class="relative overflow-hidden">
+                        <a href="product-detail.html?id=${product.id}">
+                            <img src="${product.image}" alt="${product.name}" class="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-500">
+                        </a>
+                    </div>
+                    <div class="p-4">
+                        <a href="product-detail.html?id=${product.id}">
+                            <h3 class="text-sm font-semibold text-slate-900 mb-2 group-hover:text-amber-600 transition-colors duration-200">
+                                ${product.name}
+                            </h3>
+                        </a>
+                        <div class="flex items-center justify-between">
+                            <span class="text-lg font-bold text-slate-900">$${product.price}</span>
+                            <button onclick="addToCartFromRelated(${product.id})" class="bg-amber-500 hover:bg-amber-600 text-white px-3 py-2 rounded-lg transition-all duration-200 text-xs font-medium">
+                                Add to Cart
+                            </button>
+                        </div>
+                    </div>
+                `;
+                relatedContainer.appendChild(productCard);
+            });
+        }
+
+        function addToCartFromRelated(productId) {
+            const product = products.find(p => p.id === productId);
+            if (!product) return;
+
+            let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+            const existingItem = cart.find(item => item.id === productId);
+            
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                cart.push({ ...product, quantity: 1 });
+            }
+            
+            localStorage.setItem('cart', JSON.stringify(cart));
+            updateCartCount();
+            
+            showNotification(`${product.name} added to cart!`, 'success');
+        }
+
+        function updateCartCount() {
+            const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+            const cartCount = document.getElementById('cartCount');
+            
+            if (totalItems > 0) {
+                cartCount.textContent = totalItems;
+                cartCount.classList.remove('hidden');
+            } else {
+                cartCount.classList.add('hidden');
+            }
+        }
+
+        function showNotification(message, type = 'success') {
+            const notification = document.createElement('div');
+            notification.className = `fixed top-4 right-4 z-50 px-6 py-3 rounded-lg shadow-lg transform transition-transform duration-300 translate-x-full ${
+                type === 'success' ? 'bg-green-500 text-white' : 'bg-red-500 text-white'
+            }`;
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.classList.remove('translate-x-full');
+            }, 100);
+            
+            setTimeout(() => {
+                notification.classList.add('translate-x-full');
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 3000);
+        }
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            loadProduct();
+            updateCartCount();
+        });
+    </script>
+</body>
+</html>

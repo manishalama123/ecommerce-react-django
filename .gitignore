@@ -1,0 +1,65 @@
+# ===================== #
+#   Global ignores      #
+# ===================== #
+__pycache__/
+*.py[cod]
+*.sqlite3
+*.log
+*.pot
+*.pyc
+*.pyo
+*.pyd
+*.db
+
+# Environment
+.env
+*.env
+.env.*  
+*.venv
+venv/
+ENV/
+env/
+.venv/
+
+# System files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# ===================== #
+#   Django (Backend)    #
+# ===================== #
+# Migrations
+*/migrations/__pycache__/
+*/migrations/*.py
+!*/migrations/__init__.py  # Keep init so Django detects migration packages
+
+# Media and static files
+media/
+staticfiles/
+static/
+
+# ===================== #
+#   React (Frontend)    #
+# ===================== #
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+yarn.lock
+
+# Build output
+build/
+dist/
+
+# Local config
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
