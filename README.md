@@ -6,3 +6,4 @@ an ecommerce web app using react and django
 # pip install Django
 # pip install djangorestframework
 
+# django_filter

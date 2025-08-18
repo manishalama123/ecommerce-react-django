@@ -2,12 +2,12 @@ from django.db import models
 
 # Create your models here.
 class Category(models.Model):
-    category = models.CharField(max_length=100, unique=True)
+    name = models.CharField(max_length=100, unique=True)
     created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateField(auto_now=True)
+    updated_at = models.DateTimeField(auto_now=True)
     
     def __str__(self):
-        return self.category
+        return self.name
 
 class Product(models.Model):
     title = models.CharField(max_length=100)
@@ -17,9 +17,9 @@ class Product(models.Model):
     quantity = models.PositiveIntegerField(default=0)
     image = models.ImageField(upload_to='product/')
     created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateField(auto_now=True)
+    updated_at = models.DateTimeField(auto_now=True)
     
     def __str__(self):
-        return self.name  
+        return self.title
 
     

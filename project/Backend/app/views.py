@@ -1,52 +1,50 @@
-from django.shortcuts import render
-from .serializers import *
-from .models import *
 from rest_framework import generics
-from django_filters.rest_framework import DjangoFilterBackend
+from .models import *
+from .serializers import *
+from django_filters.rest_framework import DjangoFilterBackend # type: ignore
 from rest_framework import filters
+from rest_framework.permissions import IsAdminUser,IsAuthenticated,AllowAny
 
-Category
-class CategoryList(generics.ListAPIView):
+# Create your views here.
+
+# list and craete category
+class CategoryListCreateView(generics.ListCreateAPIView):
     queryset = Category.objects.all()
     serializer_class = CategorySerializers
+    permission_classes = [IsAdminUser]
 
-class CategoryDetail(generics.RetrieveAPIView):
+    def get_permissions(self):
+        if self.request.method == "GET":
+            return [AllowAny()]
+        return [IsAdminUser()]
+
+
+class CategoryRetriveDeleteUpdateView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Category.objects.all()
     serializer_class = CategorySerializers
+    permission_classes = [IsAdminUser]
 
-class CategoryCreate(generics.CreateAPIView):
-    queryset = Category.objects.all()
-    serializer_class = CategorySerializers
-
-class CategoryDelete(generics.DestroyAPIView):
-    queryset = Category.objects.all()
-    serializer_class = CategorySerializers
-
-class CategoryUpdate(generics.UpdateAPIView):
-    queryset = Category.objects.all()
-    serializer_class = CategorySerializers
-
-# Product
-class ProductList(generics.ListAPIView):
-    queryset = Product.objects.all()
-    serializer_class = ProductSerializers
-    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
-
-    filterset_fields = ['category__category']
-
-    search_fields = ['title']
-    ordering_fields = ['price', 'created_at']
+    def get_permissions(self):
+        if self.request.method == "GET":
+            return [AllowAny()]
+        return [IsAdminUser()]
 
 
-class ProductDetail(generics.RetrieveAPIView):
+# product
+
+class ProductListCreateView(generics.ListCreateAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializers
 
+    filter_backends = [DjangoFilterBackend,filters.SearchFilter,filters.OrderingFilter]
+    filterset_fields = ['category__name']
 
-class ProductCreate(generics.CreateAPIView):
-    queryset = Product.objects.all()
-    serializer_class = ProductSerializers
+    search_fields = ['name']
+    ordering_fields = ['price','created_at']
 
-class ProductDelete(generics.DestroyAPIView):
+    
+
+
+class ProductRetriveDeleteUpdateView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializers
