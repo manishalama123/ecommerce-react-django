@@ -1,6 +1,30 @@
 import React from 'react'
+import { useForm } from 'react-hook-form';
+import { useNavigate } from 'react-router-dom';
+import { baseRequest } from '../../utils/baseRequest';
+import { toast } from 'react-hot-toast';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { loginFormValidationSchema } from '../../utils/validate';
 
-function LoginPage() {
+const LoginPage=()=> {
+    const {register, handleSubmit, formState:{errors, isSubmitting}}=useForm({
+        resolver: yupResolver(loginFormValidationSchema),
+        shouldFocusError:false
+    });
+    const navigate = useNavigate()
+    const onSubmit = async (data)=>{
+        try{
+            const response = await baseRequest.post('/auth/login/', data)
+            console.log(response.data);
+            toast.success("User logged in successfully.")
+            navigate('/')
+        }
+        catch(error)
+        {
+            console.log(error);
+            
+        }
+    }
   return <>
 
     <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
@@ -16,19 +40,25 @@ function LoginPage() {
                     </a>
                 </p>
             </div>
-            <form className="mt-8 space-y-6" onsubmit="handleLogin(event)">
+            <form onSubmit={handleSubmit(onSubmit)} className="mt-8 space-y-6" onsubmit="handleLogin(event)">
                 <div className="space-y-4">
                     <div>
-                        <label for="email" className="block text-sm font-medium text-slate-700">Email address</label>
-                        <input id="email" name="email" type="email" autocomplete="email" required 
+                        <label for="username" className="block text-sm font-medium text-slate-700">Username</label>
+                        <input 
+                        {...register('username')}
+                        id="username" name="username" type="username"  
                                className="mt-1 appearance-none relative block w-full px-3 py-3 border border-slate-300 placeholder-slate-500 text-slate-900 rounded-lg focus:outline-none focus:ring-amber-500 focus:border-amber-500 focus:z-10 sm:text-sm" 
-                               placeholder="Enter your email"/>
+                               placeholder="Username"/>
+                               {errors.username && <p className='text-red-600 text-sm'>{errors.username.message}</p>}
                     </div>
                     <div>
                         <label for="password" className="block text-sm font-medium text-slate-700">Password</label>
-                        <input id="password" name="password" type="password" autocomplete="current-password" required 
+                        <input
+                        {...register('password')}
+                         id="password" name="password" type="password"  
                                className="mt-1 appearance-none relative block w-full px-3 py-3 border border-slate-300 placeholder-slate-500 text-slate-900 rounded-lg focus:outline-none focus:ring-amber-500 focus:border-amber-500 focus:z-10 sm:text-sm" 
                                placeholder="Enter your password"/>
+                               {errors.password && <p className='text-red-600 text-sm'>{errors.password.message}</p>}
                     </div>
                 </div>
 
@@ -48,13 +78,10 @@ function LoginPage() {
                 </div>
 
                 <div>
-                    <button type="submit" className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-slate-900 hover:bg-amber-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500 transition-colors duration-200">
-                        <span className="absolute left-0 inset-y-0 flex items-center pl-3">
-                            <svg className="h-5 w-5 text-amber-500 group-hover:text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                            </svg>
-                        </span>
-                        Sign in
+                    <button type="submit" 
+                    className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-slate-900 disabled:bg-slate-700 hover:bg-amber-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500 transition-colors duration-200">
+                        
+                        {isSubmitting? "isSubmitting": "Login"}
                     </button>
                 </div>
 

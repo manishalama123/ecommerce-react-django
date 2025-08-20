@@ -28,6 +28,7 @@ const CategorySection = () => {
 
     return (
         <section className="my-8 px-4">
+            <div className='max-w-7xl mx-auto px-4'>
             <div className="font-semibold text-center mb-4">
                 <h2 className="text-2xl font-bold text-gray-800">Shop by Category</h2>
             </div>
@@ -56,6 +57,7 @@ const CategorySection = () => {
                         </div>
                     </div>
                 ))}
+            </div>
             </div>
         </section>
     );

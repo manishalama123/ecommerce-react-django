@@ -1,10 +1,10 @@
 import { NavLink } from "react-router-dom";
 import { FaSearch, FaShoppingCart, FaUser, FaBars, FaTimes } from "react-icons/fa";
 import { useState } from "react";
-import {useSelector} from 'react-redux';
+import { useSelector } from 'react-redux';
 const NavBar = () => {
-    const [menuOpen, setMenuOpen] = useState(false);
-    const products = useSelector(state=> state.cart.cartItems)
+  const [menuOpen, setMenuOpen] = useState(false);
+  const products = useSelector(state => state.cart.cartItems)
 
   return (
     <header className="w-full shadow-md bg-white">
@@ -32,15 +32,30 @@ const NavBar = () => {
         <div className="flex items-center space-x-4 text-slate-600 text-xl">
           <NavLink to="/cart" className=" relative hover:text-orange-500 transition">
             <FaShoppingCart className="text-2xl" />
-            {products.length > 0 &&(
-                <span className="absolute -top-2   text-xs w-3 left-3 bg-red-600 rounded-full flex justify-center items-center text-white">
-                    {products.length}
-                </span>
+            {products.length > 0 && (
+              <span className="absolute -top-2   text-xs w-3 left-3 bg-red-600 rounded-full flex justify-center items-center text-white">
+                {products.length}
+              </span>
             )}
           </NavLink>
           <NavLink to="/userProfile" className="hover:text-orange-500 transition">
             <FaUser />
           </NavLink>
+
+          {/* Buttons */}
+          <NavLink
+            to="/login"
+            className="px-4 py-1 rounded-full border border-slate-300 text-sm hover:bg-orange-500 hover:text-white transition"
+          >
+            Login
+          </NavLink>
+          <NavLink
+            to="/register"
+            className="px-4 py-1 rounded-full border border-slate-300 text-sm hover:bg-orange-500 hover:text-white transition"
+          >
+            Register
+          </NavLink>
+
 
           {/* Mobile menu button */}
           <button
@@ -67,6 +82,8 @@ const NavBar = () => {
           <NavLink to="/products" className="hover:text-orange-500">Products</NavLink>
           <NavLink to="/about" className="hover:text-orange-500">About</NavLink>
           <NavLink to="/contact" className="hover:text-orange-500">Contact</NavLink>
+          <NavLink to="/login" className="hover:text-orange-500">Login</NavLink>
+          <NavLink to="/register" className="hover:text-orange-500">Register</NavLink>
         </div>
       )}
     </header>

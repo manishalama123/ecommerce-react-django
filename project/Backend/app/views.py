@@ -35,6 +35,7 @@ class CategoryRetriveDeleteUpdateView(generics.RetrieveUpdateDestroyAPIView):
 class ProductListCreateView(generics.ListCreateAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializers
+    permission_classes = [AllowAny]
 
     filter_backends = [DjangoFilterBackend,filters.SearchFilter,filters.OrderingFilter]
     filterset_fields = ['category__name']
@@ -42,9 +43,20 @@ class ProductListCreateView(generics.ListCreateAPIView):
     search_fields = ['name']
     ordering_fields = ['price','created_at']
 
+    def get_permissions(self):
+        if self.request.method == "GET":
+            return [AllowAny()]
+        return [IsAdminUser()]
+
+
     
 
 
 class ProductRetriveDeleteUpdateView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializers
+
+    def get_permissions(self):
+        if self.request.method == "GET":
+            return [AllowAny()]
+        return [IsAdminUser()]
