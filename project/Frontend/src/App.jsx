@@ -11,6 +11,7 @@ import ProductsPage from './pages/ProductsPage';
 import UserProfilePage from './pages/UserProfilePage';
 import RegisterPage from './pages/auth/RegisterPage';
 import LoginPage from './pages/auth/LoginPage';
+import ProtectedRoute from './utils/ProtectedRoute';
 function App() {
   
   return <>
@@ -19,14 +20,18 @@ function App() {
         <Route path="/" element={<FrontendUser />}>
           <Route index element={<HomePage />} />
           <Route path='/about' element={<AboutPage/>}/>
-          <Route path='cart' element={<CartPage/>}/>
-          <Route path='/checkout' element={<CheckoutPage/>}/>
+          
+          
           <Route path='contact' element={<ContactPage/>}/>
           <Route path='product/:id' element={<ProductPage/>}/>
           <Route path='/products' element={<ProductsPage/>}/>
-          <Route path='userprofile' element={<UserProfilePage/>}/>
-          <Route path='/register' element={<RegisterPage/>}/>
           
+          <Route path='/register' element={<RegisterPage/>}/>
+          <Route element={<ProtectedRoute/>}>
+            <Route path='cart' element={<CartPage/>}/>
+            <Route path='/checkout' element={<CheckoutPage/>}/>
+            <Route path='userprofile' element={<UserProfilePage/>}/>
+          </Route>
           <Route path='/login' element={<LoginPage/>}/>
         </Route>
       </Routes>
