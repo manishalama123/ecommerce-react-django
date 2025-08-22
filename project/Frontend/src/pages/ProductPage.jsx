@@ -32,7 +32,7 @@ function ProductDetail() {
   useEffect(() => {
     const fetchSingleProduct = async () => {
       try {
-        const res = await axios.get(`http://127.0.0.1:8000/api/product/${id}`);
+        const res = await axios.get(`http://127.0.0.1:8000/api/products/${id}`);
         setProduct(res.data);
       } catch (err) {
         console.error('Error fetching product details:', err);

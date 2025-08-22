@@ -56,7 +56,7 @@ const NavBar = () => {
           {isAuthenticated ? (
               <>
                 
-                <button onClick={handleLogout} className="text-slate-700 hover:text-slate-900">
+                <button onClick={handleLogout} className="text-slate-700 text-sm hover:text-slate-900">
                   Logout
                 </button>
               </>

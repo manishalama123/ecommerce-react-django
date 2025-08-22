@@ -16,8 +16,8 @@ const CategorySection = () => {
             try {
                 const response = await axios.get('https://fakestoreapi.com/products/categories');
                 setcategories(response.data);
-                console.log('API categories:', response.data); // DEBUG
-                console.log('Available images:', Object.keys(categoryImages)); // DEBUG
+                // console.log('API categories:', response.data); // DEBUG
+                // console.log('Available images:', Object.keys(categoryImages)); // DEBUG
             }
             catch (err) {
                 console.error('Error fetching products:', err);

@@ -25,7 +25,9 @@ const LoginPage=()=> {
         }
         catch(error)
         {
-            console.log(error);
+            console.log("Error happening...",error);
+            const errorMsg = error.response?.data?.detail || "Username or password is incorrect";
+            toast.error(errorMsg);
             
         }
     }

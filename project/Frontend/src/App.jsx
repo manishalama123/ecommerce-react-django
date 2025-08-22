@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Route,Routes } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 import FrontendUser from './pages/auth/FrontendUser';
 import HomePage from './pages/HomePage';
 import AboutPage from './pages/AboutPage';
@@ -12,29 +12,37 @@ import UserProfilePage from './pages/UserProfilePage';
 import RegisterPage from './pages/auth/RegisterPage';
 import LoginPage from './pages/auth/LoginPage';
 import ProtectedRoute from './utils/ProtectedRoute';
+import AuthRedirect from './utils/AuthRedirect';
+import { Toaster } from 'react-hot-toast';
 function App() {
-  
+
   return <>
     <Routes>
-       
-        <Route path="/" element={<FrontendUser />}>
-          <Route index element={<HomePage />} />
-          <Route path='/about' element={<AboutPage/>}/>
-          
-          
-          <Route path='contact' element={<ContactPage/>}/>
-          <Route path='product/:id' element={<ProductPage/>}/>
-          <Route path='/products' element={<ProductsPage/>}/>
-          
-          <Route path='/register' element={<RegisterPage/>}/>
-          <Route element={<ProtectedRoute/>}>
-            <Route path='cart' element={<CartPage/>}/>
-            <Route path='/checkout' element={<CheckoutPage/>}/>
-            <Route path='userprofile' element={<UserProfilePage/>}/>
-          </Route>
-          <Route path='/login' element={<LoginPage/>}/>
+
+      <Route path="/" element={<FrontendUser />}>
+        <Route index element={<HomePage />} />
+        <Route path='/about' element={<AboutPage />} />
+        <Route path='/contact' element={<ContactPage />} />
+        <Route path='/products/:id' element={<ProductPage />} />
+        <Route path='/products' element={<ProductsPage />} />
+
+
+        {/* Auth Redirect Routes */}
+        <Route element={<AuthRedirect />}>
+          <Route path='/register' element={<RegisterPage />} />
+          <Route path='/login' element={<LoginPage />} />
         </Route>
-      </Routes>
+
+        {/* Protected Route */}
+        <Route element={<ProtectedRoute />}>
+          <Route path='/cart' element={<CartPage />} />
+          <Route path='/checkout' element={<CheckoutPage />} />
+          <Route path='/userprofile' element={<UserProfilePage />} />
+        </Route>
+
+      </Route>
+    </Routes>
+    <Toaster position='top-center'/>
 
   </>
 }

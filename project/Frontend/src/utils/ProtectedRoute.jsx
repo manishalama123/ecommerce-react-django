@@ -1,4 +1,4 @@
-import { useSelector } from "react-redux"
+;import { useSelector } from "react-redux"
 import { Navigate, Outlet } from "react-router-dom"
 
 
@@ -10,4 +10,4 @@ const ProtectedRoute = () => {
     )
 }
 
-export default ProtectedRoute
+export default ProtectedRoute;

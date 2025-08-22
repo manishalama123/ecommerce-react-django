@@ -126,7 +126,7 @@ function ProductsPage() {
               {data.map((product) => (
                 <Link
                   key={product.id}
-                  to={`/product/${product.id}`}
+                  to={`/products/${product.id}`}
                   className="relative group bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 overflow-hidden border border-slate-100"
                 >
                   <div className="block">
