@@ -1,11 +1,22 @@
-import { NavLink } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import { FaSearch, FaShoppingCart, FaUser, FaBars, FaTimes } from "react-icons/fa";
 import { useState } from "react";
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { logout } from "../redux/slice/authSlice.js";
 const NavBar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const products = useSelector(state => state.cart.cartItems)
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
 
+  const {user, isAuthenticated} = useSelector (state => state.auth)
+  const handleLogout =()=>{
+    dispatch(logout())
+    navigate('/')
+
+  }
+  console.log(user);
+  console.log(isAuthenticated);
   return (
     <header className="w-full shadow-md bg-white">
       {/* Top row: Logo, Search, Cart, User */}
@@ -42,19 +53,29 @@ const NavBar = () => {
             <FaUser />
           </NavLink>
 
-          {/* Buttons */}
-          <NavLink
-            to="/login"
-            className="px-4 py-1 rounded-full border border-slate-300 text-sm hover:bg-orange-500 hover:text-white transition"
-          >
-            Login
-          </NavLink>
-          <NavLink
-            to="/register"
-            className="px-4 py-1 rounded-full border border-slate-300 text-sm hover:bg-orange-500 hover:text-white transition"
-          >
-            Register
-          </NavLink>
+          {isAuthenticated ? (
+              <>
+                
+                <button onClick={handleLogout} className="text-slate-700 hover:text-slate-900">
+                  Logout
+                </button>
+              </>
+            ) : (
+              <>
+                <Link
+                  to="/login"
+                  className="text-slate-700 hover:text-slate-900"
+                >
+                  Login
+                </Link>
+                <Link
+                  to="/register"
+                  className="bg-slate-800 text-white px-3 py-1 rounded hover:bg-slate-700"
+                >
+                  Register
+                </Link>
+              </>
+            )}
 
 
           {/* Mobile menu button */}

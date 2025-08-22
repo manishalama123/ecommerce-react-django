@@ -15,3 +15,4 @@ an ecommerce web app using react and django
 # npm install @hookform/resolvers yup
 # npm install react-slick --save
 # npm install slick-carousel --save
+# npm i redux-persist

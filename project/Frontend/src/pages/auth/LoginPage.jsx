@@ -5,6 +5,8 @@ import { baseRequest } from '../../utils/baseRequest';
 import { toast } from 'react-hot-toast';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { loginFormValidationSchema } from '../../utils/validate';
+import { useDispatch } from 'react-redux';
+import { loginSuccess } from '../../redux/slice/authSlice';
 
 const LoginPage=()=> {
     const {register, handleSubmit, formState:{errors, isSubmitting}}=useForm({
@@ -12,11 +14,13 @@ const LoginPage=()=> {
         shouldFocusError:false
     });
     const navigate = useNavigate()
+    const dispatch = useDispatch()
     const onSubmit = async (data)=>{
         try{
             const response = await baseRequest.post('/auth/login/', data)
             console.log(response.data);
             toast.success("User logged in successfully.")
+            dispatch(loginSuccess(response.data))
             navigate('/')
         }
         catch(error)
