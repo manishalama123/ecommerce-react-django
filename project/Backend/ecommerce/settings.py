@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     # app
     'app',
     'accounts',
+    'cart',
     
 ]
 # For filtering
