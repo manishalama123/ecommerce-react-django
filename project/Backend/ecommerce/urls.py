@@ -25,8 +25,11 @@ urlpatterns = [
     path('api/', include('app.urls')),
     # auth
     path('api/auth/', include('accounts.urls')),
+    path('api/cart/', include('cart.urls')),
     
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    
+    
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
