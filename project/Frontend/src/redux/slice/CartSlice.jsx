@@ -100,6 +100,13 @@ const cartSlice = createSlice({
             state.totalItems = 0;
             localStorage.removeItem("cart");
 
+        },
+        // to sync with backend:
+        syncWithServer: (state, action) =>{
+            const serverCartItems = action.payload;
+            state.cartItems = serverCartItems;
+            UpdateStateAndSave(state);
+
         }
     }
 })
@@ -108,7 +115,8 @@ export const {
     incrementQty,
     decrementQty,
     removeItem,
-    clearCart
+    clearCart, 
+    syncWithServer
 } = cartSlice.actions;
 
 export default cartSlice.reducer;

@@ -4,12 +4,14 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 
 import QuantitySelector from '../components/QuantitySelector';
+import { useAddToCart } from '../api/fetchApi';
 
 function ProductDetail() {
   const { id } = useParams();
   const [product, setProduct] = useState(null);
   const [quantity, setQuantity] = useState(1);
-
+ 
+  
   const handleIncrease = () =>{
     if(quantity<10){
       setQuantity(prev => prev +1);

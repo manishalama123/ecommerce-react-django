@@ -4,12 +4,21 @@ import { Star, ShoppingCart, Heart } from 'lucide-react';
 import { useSelector, useDispatch } from 'react-redux';
 import { toast } from 'react-toastify';
 import { addToCart } from '../redux/slice/CartSlice';
-import { useCategories, useProducts } from '../api/fetchApi';
+import { useAddToCart, useCategories, useProducts } from '../api/fetchApi';
 
 function ProductsPage() {
   const dispatch = useDispatch();
   const cartItems = useSelector((state) => state.cart.cartItems);
   const [selectedCategory, setSelectedCategory] = useState('all');
+  const addToCartMutation = useAddToCart();
+  // if user is logged in, also update backend
+  const token = useSelector((state) => state.auth?.access);
+  if(token){
+    addToCartMutation.mutate({
+      product_id: product.id,
+      quantity: 1
+    })
+  }
 
   // Fetch categories and products (keeping original structure)
   const { data: categories, isLoading: categoriesLoading } = useCategories();
