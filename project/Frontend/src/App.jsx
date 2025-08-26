@@ -15,26 +15,14 @@ import ProtectedRoute from './utils/ProtectedRoute';
 import AuthRedirect from './utils/AuthRedirect';
 import { Toaster } from 'react-hot-toast';
 import { useDispatch, useSelector } from 'react-redux';
-import { useCart } from './api/fetchApi';
+
 function App() {
 
   const dispatch = useDispatch();
   const token = useSelector((state) => state.auth?.access);
-  const { data: serverCart, refetch } = useCart();
 
-  useEffect(() => {
-    
-    if (token) {
-      refetch();
-    }
-  }, [token, refetch])
+
   
-  useEffect(() => {
-    if (serverCart?.items) {
-      dispatch(syncWithServer(serverCart.items));
-    }
-  }, [serverCart, dispatch]);
-
   return <>
     <Routes>
 

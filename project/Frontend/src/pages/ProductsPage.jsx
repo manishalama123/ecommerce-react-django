@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { Star, ShoppingCart, Heart } from 'lucide-react';
 import { useSelector, useDispatch } from 'react-redux';
 import { toast } from 'react-toastify';
-import { useAddToCart, useCategories, useProducts } from '../api/fetchApi';
+import { useCategories, useProducts } from '../api/fetchApi';
 
 import { addItemToCart } from '../redux/slice/cartSlice';
 

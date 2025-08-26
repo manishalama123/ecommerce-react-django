@@ -1,61 +1,90 @@
+// src/pages/CartPage.jsx
+
 import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux'; // Keep useDispatch for dispatching thunks for actions
+import { ShoppingCart as ShoppingCartIcon, Minus, Plus, Trash2 } from 'lucide-react'; // Import Lucide icons
+
+// Import the async thunks for modifying the cart
 import {
-    fetchCart,
-    addItemToCart, // You might need this from a different component, but good to have it here for context
     updateCartItem,
     removeCartItem,
+    // clearCart, // You'll need a new thunk for this
 } from '../redux/slice/cartSlice.js';
+
+// Import the useCart hook from fetchApi
+import { useCart } from '../api/fetchApi'; // Make sure this path is correct
 
 function CartPage() {
     const dispatch = useDispatch();
-    const { cartItems, totalQuantity, totalPrice, totalItems, loading, error } = useSelector(state => state.cart);
 
-    // Fetch the cart data when the component first mounts.
-    useEffect(() => {
-        // Only fetch if the loading state is 'idle' to prevent multiple fetches
-        if (loading === 'idle') {
-            dispatch(fetchCart());
-        }
-    }, [dispatch, loading]);
+    // ✅ Use useCart from React Query to fetch the data
+    const { data: cartData, isLoading, isError, error, refetch } = useCart();
+
+    // Use a derived state for cart items and totals from React Query's data
+    const cartItems = cartData?.items || [];
+    // ...
+    const totalPrice = cartData?.total_price || 0;
+    // ...
+    const totalItems = cartItems.length; // Assuming totalItems is just the count of unique products
+
+    // When an item is updated or removed, we want to refetch the cart
+    // This effect will re-run `useCart` query after a dispatch action if needed.
+    // However, it's generally better to use onSuccess callbacks for mutations
+    // in conjunction with queryClient.invalidateQueries(['cart']) for immediate updates.
 
     // Handle button clicks to dispatch async thunks
-    const handleIncrementQty = (itemId, currentQuantity) => {
-        // This will call the API to update the quantity
-        dispatch(updateCartItem({ id: itemId, quantity: currentQuantity + 1 }));
-    };
-
-    const handleDecrementQty = (itemId, currentQuantity) => {
-        if (currentQuantity > 1) {
-            // Only update if quantity is greater than 1
-            dispatch(updateCartItem({ id: itemId, quantity: currentQuantity - 1 }));
-        } else {
-            // Remove the item if the quantity is 1 and the user decrements it
-            dispatch(removeCartItem(itemId));
+    const handleIncrementQty = async (itemId, currentQuantity) => {
+        try {
+            await dispatch(updateCartItem({ id: itemId, quantity: currentQuantity + 1 })).unwrap();
+            refetch(); // Refetch the cart data after successful update
+        } catch (err) {
+            console.error("Failed to increment quantity:", err);
+            // Optionally show a toast error
         }
     };
 
-    const handleRemoveItem = (itemId) => {
-        dispatch(removeCartItem(itemId));
+    const handleDecrementQty = async (itemId, currentQuantity) => {
+        if (currentQuantity > 1) {
+            try {
+                await dispatch(updateCartItem({ id: itemId, quantity: currentQuantity - 1 })).unwrap();
+                refetch(); // Refetch the cart data after successful update
+            } catch (err) {
+                console.error("Failed to decrement quantity:", err);
+                // Optionally show a toast error
+            }
+        } else {
+            // Remove the item if the quantity is 1 and the user decrements it
+            handleRemoveItem(itemId);
+        }
+    };
+
+    const handleRemoveItem = async (itemId) => {
+        try {
+            await dispatch(removeCartItem(itemId)).unwrap();
+            refetch(); // Refetch the cart data after successful removal
+        } catch (err) {
+            console.error("Failed to remove item:", err);
+            // Optionally show a toast error
+        }
     };
 
     const handleClearCart = () => {
-        // You would need a new thunk for this, let's create a placeholder
-        // dispatch(clearAllCartItems());
-        alert("Clear Cart functionality requires a new thunk to be implemented.");
+        // This functionality needs a dedicated thunk that clears all items from the backend
+        alert("Clear Cart functionality requires a new thunk to be implemented and dispatched.");
     };
 
     // --- Conditional Rendering for UI States ---
-    if (loading === 'pending') {
+    if (isLoading) {
         return <div className="p-4 text-center text-gray-500">Loading your cart...</div>;
     }
 
-    if (error) {
-        return <div className="p-4 text-center text-red-600">Error: {error}. Please try again.</div>;
+    if (isError) {
+        return <div className="p-4 text-center text-red-600">Error: {error?.message || 'Something went wrong'}. Please try again.</div>;
     }
 
-    if (cartItems?.length === 0) {
+    // Check if cartItems is empty after loading
+    if (cartItems.length === 0) {
         return (
             <div className="p-4 text-center">
                 <h1 className="text-3xl font-bold text-gray-900 mb-4">Your Cart is Empty</h1>
@@ -65,7 +94,7 @@ function CartPage() {
             </div>
         );
     }
-    
+
     return (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             <h1 className="text-3xl font-bold text-gray-900 mb-8">Shopping Cart</h1>
@@ -75,19 +104,19 @@ function CartPage() {
                         {cartItems.map((item) => (
                             <div key={item.id} className="p-6 border-b border-gray-200">
                                 <div className="flex items-center space-x-4">
-                                    <img 
-                                        src={item.image} 
-                                        alt={item.title} 
-                                        className="w-20 h-20 object-cover rounded-lg" 
+                                    <img
+                                        src={item.product_details.image} // Assuming item directly has image and title
+                                        alt={item.product_details.title}
+                                        className="w-20 h-20 object-cover rounded-lg"
                                     />
                                     <div className="flex-1">
-                                        <h3 className="text-lg font-semibold text-gray-900">{item.title}</h3>
-                                        <p className="text-gray-600">Category: {item.category}</p>
+                                        <h3 className="text-lg font-semibold text-gray-900">{item.product_details.title}</h3>
+                                        <p className="text-gray-600">Category: {item.product_details.category}</p>
                                         <div className="flex items-center mt-2 gap-4">
-                                            <span className="text-xl font-bold text-gray-900">${item.price}</span>
+                                            <span className="text-xl font-bold text-gray-900">${item.product_details.price}</span>
                                             <div className="flex items-center space-x-3">
-                                                <button 
-                                                    onClick={() => handleRemoveItem(item.id)} 
+                                                <button
+                                                    onClick={() => handleRemoveItem(item.id)}
                                                     className="text-red-600"
                                                 >
                                                     Remove
@@ -96,27 +125,27 @@ function CartPage() {
                                         </div>
                                     </div>
                                     <div className="flex items-center space-x-3">
-                                        <button 
-                                            onClick={() => handleDecrementQty(item.id, item.quantity)} 
+                                        <button
+                                            onClick={() => handleDecrementQty(item.id, item.quantity)}
                                             className="w-8 h-8 border border-gray-300 rounded-lg flex items-center justify-center hover:bg-gray-50"
                                         >
-                                            <i data-lucide="minus" className="w-4 h-4">-</i>
+                                            <Minus className="w-4 h-4" />
                                         </button>
                                         <span className="text-lg font-semibold">{item.quantity}</span>
-                                        <button 
-                                            onClick={() => handleIncrementQty(item.id, item.quantity)} 
+                                        <button
+                                            onClick={() => handleIncrementQty(item.id, item.quantity)}
                                             className="w-8 h-8 border border-gray-300 rounded-lg flex items-center justify-center hover:bg-gray-50"
                                         >
-                                            <i data-lucide="plus" className="w-4 h-4">+</i>
+                                            <Plus className="w-4 h-4" />
                                         </button>
                                     </div>
                                     <div className="text-right">
-                                        <div className="text-xl font-bold text-gray-900">${(item.price * item.quantity).toFixed(2)}</div>
-                                        <button 
-                                            onClick={() => handleRemoveItem(item.id)} 
+                                        <div className="text-xl font-bold text-gray-900">${(item.product_details.price * item.quantity)}</div>
+                                        <button
+                                            onClick={() => handleRemoveItem(item.id)}
                                             className="text-red-600 hover:text-red-800 mt-2"
                                         >
-                                            <i data-lucide="trash-2" className="w-4 h-4"></i>
+                                            <Trash2 className="w-4 h-4" />
                                         </button>
                                     </div>
                                 </div>
@@ -147,7 +176,7 @@ function CartPage() {
                         <div className="space-y-3 mb-6">
                             <div className="flex justify-between">
                                 <span className="text-gray-600">Subtotal ({totalItems} items)</span>
-                                <span className="font-semibold">${totalPrice.toFixed(2)}</span>
+                                <span className="font-semibold">${totalPrice}</span>
                             </div>
                             <div className="flex justify-between">
                                 <span className="text-gray-600">Shipping</span>
@@ -160,11 +189,11 @@ function CartPage() {
                             <hr className="border-gray-200" />
                             <div className="flex justify-between text-lg font-bold">
                                 <span>Total</span>
-                                <span>${(totalPrice + 9.99 + 64.00).toFixed(2)}</span>
+                                <span>${(totalPrice + 9.99 + 64.00)}</span>
                             </div>
                         </div>
-                        <Link 
-                            to="/checkout" 
+                        <Link
+                            to="/checkout"
                             className="w-full bg-blue-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-blue-700 transition-colors block text-center"
                         >
                             Proceed to Checkout
