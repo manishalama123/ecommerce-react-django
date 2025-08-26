@@ -3,38 +3,45 @@ import { Link } from 'react-router-dom';
 import { Star, ShoppingCart, Heart } from 'lucide-react';
 import { useSelector, useDispatch } from 'react-redux';
 import { toast } from 'react-toastify';
-import { addToCart } from '../redux/slice/CartSlice';
 import { useAddToCart, useCategories, useProducts } from '../api/fetchApi';
+
+import { addItemToCart } from '../redux/slice/cartSlice';
 
 function ProductsPage() {
   const dispatch = useDispatch();
-  const cartItems = useSelector((state) => state.cart.cartItems);
   const [selectedCategory, setSelectedCategory] = useState('all');
-  const addToCartMutation = useAddToCart();
-  // if user is logged in, also update backend
-  const token = useSelector((state) => state.auth?.access);
-  if(token){
-    addToCartMutation.mutate({
-      product_id: product.id,
-      quantity: 1
-    })
-  }
 
   // Fetch categories and products (keeping original structure)
   const { data: categories, isLoading: categoriesLoading } = useCategories();
   const { data, isLoading, isError, error, refetch } = useProducts(selectedCategory === 'all' ? '' : selectedCategory);
 
-  // Debug logs
-  console.log('Selected Category:', selectedCategory);
-  console.log('API Parameter:', selectedCategory === 'all' ? '' : selectedCategory);
-  console.log('Products data:', data);
 
-  const handleAddToCart = (e, product) => {
-    e.preventDefault(); // Prevent navigation when clicking add to cart
+  const handleAddToCart = async (e, product) => {
+    e.preventDefault();
     e.stopPropagation();
-    dispatch(addToCart(product));
-    toast.info('Added to the Cart');
-  };
+
+    try {
+        // Dispatch the async thunk instead of the synchronous reducer
+        await dispatch(addItemToCart({
+            product_id: product.id,
+            quantity: 1, // Start with a quantity of 1
+            price: product.price, // Include any other necessary product details
+            title: product.title,
+            image: product.image,
+            category: product.category,
+        })).unwrap();
+
+        // The .unwrap() method lets you handle rejections in the component
+        // If the thunk is successful, the `toast.success` will run
+        toast.success(`${product.title} added to the cart!`);
+        console.log('Added to cart:', product.title);
+
+    } catch (err) {
+        // Handle any errors from the API call
+        toast.error('Failed to add item to cart. Please try again.');
+        console.error('Failed to add to cart:', err);
+    }
+};
 
   const handleCategoryClick = (category) => {
     console.log('Category clicked:', category); // Debug log
@@ -55,8 +62,8 @@ function ProductsPage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="text-center">
           <p className="text-red-600">Error loading products: {error?.message || 'Something went wrong'}</p>
-          <button 
-            onClick={() => window.location.reload()} 
+          <button
+            onClick={() => window.location.reload()}
             className="mt-4 px-4 py-2 bg-amber-500 text-white rounded-lg hover:bg-amber-600"
           >
             Try Again
@@ -80,11 +87,10 @@ function ProductsPage() {
             <div className="space-y-2">
               <button
                 onClick={() => handleCategoryClick('all')}
-                className={`w-full text-left px-3 py-2 rounded-lg capitalize transition-colors ${
-                  selectedCategory === 'all'
+                className={`w-full text-left px-3 py-2 rounded-lg capitalize transition-colors ${selectedCategory === 'all'
                     ? 'bg-amber-100 text-amber-700'
                     : 'text-slate-600 hover:bg-slate-100'
-                }`}
+                  }`}
               >
                 All Products
               </button>
@@ -96,11 +102,10 @@ function ProductsPage() {
                   <button
                     key={cat.id || cat.name}
                     onClick={() => handleCategoryClick(cat.name)}
-                    className={`w-full text-left px-3 py-2 rounded-lg capitalize transition-colors ${
-                      selectedCategory === cat.name
+                    className={`w-full text-left px-3 py-2 rounded-lg capitalize transition-colors ${selectedCategory === cat.name
                         ? 'bg-amber-100 text-amber-700'
                         : 'text-slate-600 hover:bg-slate-100'
-                    }`}
+                      }`}
                   >
                     {cat.name}
                   </button>
@@ -119,8 +124,8 @@ function ProductsPage() {
           ) : isError ? (
             <div className="text-center py-12">
               <p className="text-red-600">Error loading products: {error?.message || 'Something went wrong'}</p>
-              <button 
-                onClick={() => window.location.reload()} 
+              <button
+                onClick={() => window.location.reload()}
                 className="mt-4 px-4 py-2 bg-amber-500 text-white rounded-lg hover:bg-amber-600"
               >
                 Try Again
@@ -172,7 +177,7 @@ function ProductsPage() {
                     <h3 className="text-sm font-semibold text-slate-900 mb-2 group-hover:text-amber-600 transition-colors duration-200 line-clamp-2">
                       {product.title}
                     </h3>
-                    
+
                     <div className="flex items-center justify-between mb-3">
                       <span className="text-lg font-bold text-slate-900">
                         ${product.price}
@@ -180,7 +185,7 @@ function ProductsPage() {
                     </div>
 
                     <button
-                      onClick={(e) => handleAddToCart(e, product)}
+                      onClick={(e)=>{handleAddToCart(e, product)}}  
                       className="w-full bg-amber-500 hover:bg-amber-600 text-white px-4 py-2 rounded-lg transition-all duration-200 text-xs font-medium flex items-center justify-center space-x-1"
                     >
                       <ShoppingCart className="w-3 h-3" />

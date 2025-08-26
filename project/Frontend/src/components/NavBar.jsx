@@ -43,7 +43,7 @@ const NavBar = () => {
         <div className="flex items-center space-x-4 text-slate-600 text-xl">
           <NavLink to="/cart" className=" relative hover:text-orange-500 transition">
             <FaShoppingCart className="text-2xl" />
-            {products.length > 0 && (
+            {products?.length > 0 && (
               <span className="absolute -top-2   text-xs w-3 left-3 bg-red-600 rounded-full flex justify-center items-center text-white">
                 {products.length}
               </span>

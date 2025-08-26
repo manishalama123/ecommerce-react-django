@@ -2,7 +2,6 @@ import React from 'react'
 import { useSelector, useDispatch } from "react-redux";
 
 import { NavLink, Link } from 'react-router-dom';
-import { incrementQty, decrementQty, removeItem, clearCart } from "../redux/slice/CartSlice";
 function CheckoutPage() {
     const { cartItems, totalPrice, totalQuantity, totalItems } = useSelector((state) => state.cart);
     const dispatch = useDispatch();
@@ -182,8 +181,8 @@ function CheckoutPage() {
                     
                     <div className="space-y-3 mb-6">
                         <div className="flex justify-between">
-                            <span className="text-gray-600">Subtotal ({totalQuantity})</span>
-                            <span className="font-semibold">${totalPrice}</span>
+                            <span className="text-gray-600">Subtotal quantity</span>
+                            <span className="font-semibold">$tp</span>
                         </div>
                         <div className="flex justify-between">
                             <span className="text-gray-600">Shipping</span>
@@ -196,7 +195,7 @@ function CheckoutPage() {
                         <hr className="border-gray-200" />
                         <div className="flex justify-between text-lg font-bold">
                             <span>Total</span>
-                            <span>${totalPrice + 9.99 + 64}</span>
+                            <span>$tp</span>
                         </div>
                     </div>
 
