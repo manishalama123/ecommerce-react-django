@@ -4,6 +4,8 @@ from .models import *
 from rest_framework import generics, status
 from  rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
+from django.shortcuts import get_object_or_404
+
 
 class CartView(generics.RetrieveAPIView):
     serializer_class = CartSerializer
@@ -22,10 +24,11 @@ class AddToCartView(generics.CreateAPIView):
 
         product_id = request.data.get('product')
         quantity = request.data.get('quantity', 1)
+        product = get_object_or_404(Product, id=product_id)
 
         cart_item, created = CartItem.objects.get_or_create(
             cart=cart,
-            product_id=product_id,
+            product=product,
             defaults={'quantity': quantity}
         )
         if not created:

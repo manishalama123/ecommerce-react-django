@@ -12,9 +12,7 @@ class CartItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = CartItem
         fields = ['id', 'product', 'product_details', 'quantity', 'created_at']
-        extra_kwargs = {
-            'product': {'write_only': True}
-        }
+        
 
 class CartSerializer(serializers.ModelSerializer):
     items = CartItemSerializer(many=True, read_only=True)

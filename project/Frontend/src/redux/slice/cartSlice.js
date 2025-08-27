@@ -6,25 +6,89 @@ import axios from 'axios';
 // Define the base URL for your Django API
 const API_URL = 'http://localhost:8000/api/cart/';
 
-// Async thunks (these look good and don't need changes)
-export const fetchCart = createAsyncThunk('cart/fetchCart', async () => {
-    const response = await axios.get(API_URL);
-    return response.data;
+// A helper function to get the token from local storage
+const getToken = () => {
+    const authData = localStorage.getItem('authToken');
+    if (authData) {
+        return authData;
+    }
+    return null;
+};
+
+// Async thunks
+export const fetchCart = createAsyncThunk('cart/fetchCart', async (_, { rejectWithValue }) => {
+    try {
+        const token = getToken();
+        // Configuration object for Axios with the Authorization header
+        const config = token ? {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        } : {};
+        const response = await axios.get(API_URL, config);
+        return response.data;
+    } catch (error) {
+        return rejectWithValue(error.response.data);
+    }
 });
 
-export const addItemToCart = createAsyncThunk('cart/addToCart', async (item) => {
-    const response = await axios.post(`${API_URL}add/`, item);
-    return response.data;
+export const addItemToCart = createAsyncThunk('cart/addToCart', async (item, { rejectWithValue }) => {
+    try {
+        const token = getToken();
+        if (!token) {
+            throw new Error("Authentication token not found.");
+        }
+        const config = {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        };
+
+        const response = await axios.post(`${API_URL}add/`, {
+            product: item.product,
+            quantity: item.quantity
+        }, config);
+
+        return response.data;
+    } catch (error) {
+        return rejectWithValue(error.response.data);
+    }
+});
+export const updateCartItem = createAsyncThunk('cart/updateCartItem', async ({ id, quantity, productId }, { rejectWithValue }) => {
+    try {
+        const token = getToken();
+        if (!token) {
+            throw new Error("Authentication token not found.");
+        }
+        const config = {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        };
+        // ✅ Include the productId in the request body
+        const response = await axios.put(`${API_URL}update/${id}/`, { product: productId, quantity }, config);
+        return response.data;
+    } catch (error) {
+        return rejectWithValue(error.response.data);
+    }
 });
 
-export const updateCartItem = createAsyncThunk('cart/updateCartItem', async ({ id, quantity }) => {
-    const response = await axios.put(`${API_URL}update/${id}/`, { quantity });
-    return response.data;
-});
-
-export const removeCartItem = createAsyncThunk('cart/removeCartItem', async (id) => {
-    await axios.delete(`${API_URL}remove/${id}/`);
-    return id; // The ID of the item that was removed
+export const removeCartItem = createAsyncThunk('cart/removeCartItem', async (id, { rejectWithValue }) => {
+    try {
+        const token = getToken();
+        if (!token) {
+            throw new Error("Authentication token not found.");
+        }
+        const config = {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        };
+        await axios.delete(`${API_URL}remove/${id}/`, config);
+        return id;
+    } catch (error) {
+        return rejectWithValue(error.response.data);
+    }
 });
 
 const initialState = {
@@ -70,25 +134,28 @@ const cartSlice = createSlice({
                 state.loading = 'failed';
                 state.error = action.error.message;
             })
-            
+
             // --- Handlers for adding an item ---
             .addCase(addItemToCart.fulfilled, (state, action) => {
-                // The backend should return the updated cart or the new item.
-                // Here, we'll assume it returns the new item.
-                const newItem = action.payload;
-                const existing = state.cartItems.find(item => item.id === newItem.id);
-
+                const newCartItem = action.payload; // from backend
+            
+                const existing = state.cartItems.find(
+                    item => item.product === newCartItem.product  // use product ID, not product_details
+                );
+            
                 if (existing) {
-                    existing.quantity = newItem.quantity; // Update quantity
+                    existing.quantity = newCartItem.quantity;
                 } else {
-                    state.cartItems.push(newItem); // Add new item
+                    state.cartItems.push(newCartItem);
                 }
+            
                 const { totalPrice, totalQuantity, totalItems } = calculateTotals(state.cartItems);
                 state.totalPrice = totalPrice;
                 state.totalQuantity = totalQuantity;
                 state.totalItems = totalItems;
             })
             
+
             // --- Handlers for updating an item ---
             .addCase(updateCartItem.fulfilled, (state, action) => {
                 const updatedItem = action.payload;

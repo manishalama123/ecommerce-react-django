@@ -16,32 +16,26 @@ function ProductsPage() {
   const { data, isLoading, isError, error, refetch } = useProducts(selectedCategory === 'all' ? '' : selectedCategory);
 
 
-  const handleAddToCart = async (e, product) => {
-    e.preventDefault();
-    e.stopPropagation();
-
+  const handleAddToCart = async (product) => {
     try {
-        // Dispatch the async thunk instead of the synchronous reducer
-        await dispatch(addItemToCart({
-            product_id: product.id,
-            quantity: 1, // Start with a quantity of 1
-            price: product.price, // Include any other necessary product details
-            title: product.title,
-            image: product.image,
-            category: product.category,
-        })).unwrap();
+      const item = {
+        // ✅ Change this key from `product_id` to `product`
+        product: product.id,
+        quantity: 1,
+      };
+      await dispatch(addItemToCart(item)).unwrap();
+      toast.success("Item added to cart!");
+      console.log("Product object:", product);
+      console.log("Product ID:", product.id);
 
-        // The .unwrap() method lets you handle rejections in the component
-        // If the thunk is successful, the `toast.success` will run
-        toast.success(`${product.title} added to the cart!`);
-        console.log('Added to cart:', product.title);
+    } catch (error) {
+      console.error("Failed to add to cart:", error);
+      toast.error("Failed to add item to cart.");
+      console.log("Product object:", product);
+      console.log("Product ID:", product.id);
 
-    } catch (err) {
-        // Handle any errors from the API call
-        toast.error('Failed to add item to cart. Please try again.');
-        console.error('Failed to add to cart:', err);
     }
-};
+  };
 
   const handleCategoryClick = (category) => {
     console.log('Category clicked:', category); // Debug log
@@ -88,8 +82,8 @@ function ProductsPage() {
               <button
                 onClick={() => handleCategoryClick('all')}
                 className={`w-full text-left px-3 py-2 rounded-lg capitalize transition-colors ${selectedCategory === 'all'
-                    ? 'bg-amber-100 text-amber-700'
-                    : 'text-slate-600 hover:bg-slate-100'
+                  ? 'bg-amber-100 text-amber-700'
+                  : 'text-slate-600 hover:bg-slate-100'
                   }`}
               >
                 All Products
@@ -103,8 +97,8 @@ function ProductsPage() {
                     key={cat.id || cat.name}
                     onClick={() => handleCategoryClick(cat.name)}
                     className={`w-full text-left px-3 py-2 rounded-lg capitalize transition-colors ${selectedCategory === cat.name
-                        ? 'bg-amber-100 text-amber-700'
-                        : 'text-slate-600 hover:bg-slate-100'
+                      ? 'bg-amber-100 text-amber-700'
+                      : 'text-slate-600 hover:bg-slate-100'
                       }`}
                   >
                     {cat.name}
@@ -185,7 +179,7 @@ function ProductsPage() {
                     </div>
 
                     <button
-                      onClick={(e)=>{handleAddToCart(e, product)}}  
+                      onClick={() => { handleAddToCart(product) }}
                       className="w-full bg-amber-500 hover:bg-amber-600 text-white px-4 py-2 rounded-lg transition-all duration-200 text-xs font-medium flex items-center justify-center space-x-1"
                     >
                       <ShoppingCart className="w-3 h-3" />

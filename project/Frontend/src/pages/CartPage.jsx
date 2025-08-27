@@ -7,6 +7,7 @@ import { ShoppingCart as ShoppingCartIcon, Minus, Plus, Trash2 } from 'lucide-re
 
 // Import the async thunks for modifying the cart
 import {
+    fetchCart,
     updateCartItem,
     removeCartItem,
     // clearCart, // You'll need a new thunk for this
