@@ -1,19 +1,13 @@
-// src/pages/CartPage.jsx
-
 import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useDispatch } from 'react-redux'; // Keep useDispatch for dispatching thunks for actions
 import { ShoppingCart as ShoppingCartIcon, Minus, Plus, Trash2 } from 'lucide-react'; // Import Lucide icons
 
-// Import the async thunks for modifying the cart
 import {
     fetchCart,
     updateCartItem,
     removeCartItem,
-    // clearCart, // You'll need a new thunk for this
 } from '../redux/slice/cartSlice.js';
-
-// Import the useCart hook from fetchApi
 import { useCart } from '../api/fetchApi'; // Make sure this path is correct
 
 function CartPage() {
@@ -24,10 +18,9 @@ function CartPage() {
 
     // Use a derived state for cart items and totals from React Query's data
     const cartItems = cartData?.items || [];
-    // ...
-    const totalPrice = cartData?.total_price || 0;
-    // ...
-    const totalItems = cartItems.length; // Assuming totalItems is just the count of unique products
+    const totalPrice = cartItems.reduce((sum, item) => sum + (parseFloat(item.product_details.price)*item.quantity), 0);
+    const totalQuantity = cartItems.reduce((sum, item) => sum + item.quantity, 0)
+     // Assuming totalItems is just the count of unique products
 
     // When an item is updated or removed, we want to refetch the cart
     // This effect will re-run `useCart` query after a dispatch action if needed.
@@ -35,9 +28,12 @@ function CartPage() {
     // in conjunction with queryClient.invalidateQueries(['cart']) for immediate updates.
 
     // Handle button clicks to dispatch async thunks
-    const handleIncrementQty = async (itemId, currentQuantity) => {
+    const handleIncrementQty = async (item, currentQuantity) => {
         try {
-            await dispatch(updateCartItem({ id: itemId, quantity: currentQuantity + 1 })).unwrap();
+            await dispatch(updateCartItem({ 
+                id: item.id, 
+                productId: item.product.id || item.product,
+                quantity: currentQuantity + 1 })).unwrap();
             refetch(); // Refetch the cart data after successful update
         } catch (err) {
             console.error("Failed to increment quantity:", err);
@@ -45,18 +41,20 @@ function CartPage() {
         }
     };
 
-    const handleDecrementQty = async (itemId, currentQuantity) => {
+    const handleDecrementQty = async (item, currentQuantity) => {
         if (currentQuantity > 1) {
             try {
-                await dispatch(updateCartItem({ id: itemId, quantity: currentQuantity - 1 })).unwrap();
-                refetch(); // Refetch the cart data after successful update
+                await dispatch(updateCartItem({ 
+                    id: item.id, 
+                    productId: item.product.id || item.product, 
+                    quantity: currentQuantity - 1 
+                })).unwrap();
+                refetch();
             } catch (err) {
                 console.error("Failed to decrement quantity:", err);
-                // Optionally show a toast error
             }
         } else {
-            // Remove the item if the quantity is 1 and the user decrements it
-            handleRemoveItem(itemId);
+            handleRemoveItem(item.id);
         }
     };
 
@@ -75,11 +73,10 @@ function CartPage() {
         alert("Clear Cart functionality requires a new thunk to be implemented and dispatched.");
     };
 
-    // --- Conditional Rendering for UI States ---
+
     if (isLoading) {
         return <div className="p-4 text-center text-gray-500">Loading your cart...</div>;
     }
-
     if (isError) {
         return <div className="p-4 text-center text-red-600">Error: {error?.message || 'Something went wrong'}. Please try again.</div>;
     }
@@ -127,14 +124,14 @@ function CartPage() {
                                     </div>
                                     <div className="flex items-center space-x-3">
                                         <button
-                                            onClick={() => handleDecrementQty(item.id, item.quantity)}
+                                            onClick={() => handleDecrementQty(item, item.quantity)}
                                             className="w-8 h-8 border border-gray-300 rounded-lg flex items-center justify-center hover:bg-gray-50"
                                         >
                                             <Minus className="w-4 h-4" />
                                         </button>
                                         <span className="text-lg font-semibold">{item.quantity}</span>
                                         <button
-                                            onClick={() => handleIncrementQty(item.id, item.quantity)}
+                                            onClick={() => handleIncrementQty(item, item.quantity)}
                                             className="w-8 h-8 border border-gray-300 rounded-lg flex items-center justify-center hover:bg-gray-50"
                                         >
                                             <Plus className="w-4 h-4" />
@@ -176,7 +173,7 @@ function CartPage() {
                         <h3 className="text-lg font-semibold text-gray-900 mb-4">Order Summary</h3>
                         <div className="space-y-3 mb-6">
                             <div className="flex justify-between">
-                                <span className="text-gray-600">Subtotal ({totalItems} items)</span>
+                                <span className="text-gray-600">Subtotal ({totalQuantity} items)</span>
                                 <span className="font-semibold">${totalPrice}</span>
                             </div>
                             <div className="flex justify-between">

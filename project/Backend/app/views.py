@@ -4,6 +4,7 @@ from .serializers import *
 from django_filters.rest_framework import DjangoFilterBackend # type: ignore
 from rest_framework import filters
 from rest_framework.permissions import IsAdminUser,IsAuthenticated,AllowAny
+from rest_framework.response import Response
 
 # Create your views here.
 
@@ -60,3 +61,23 @@ class ProductRetriveDeleteUpdateView(generics.RetrieveUpdateDestroyAPIView):
         if self.request.method == "GET":
             return [AllowAny()]
         return [IsAdminUser()]
+
+
+class OrderCreateView(generics.CreateAPIView):
+    queryset = Order.objects.all()
+    serializer_class = OrderSerializers
+    permission_classes = [IsAuthenticated]
+
+    def create(self, request, *args, **kwargs):
+        serializers = self.get_serializer(data = request.data)
+        serializers.is_valid(raise_exception = True)
+        order = Order.save()
+
+        if payment_method == "cod":
+            order.save()
+            return Response({"message" : "Order placed successfully"})
+        
+        elif payment_method == "esewa":
+            pass
+        return Response({"message": "Invalid payment method"})
+    
