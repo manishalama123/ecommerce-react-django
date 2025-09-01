@@ -4,6 +4,7 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 
 import QuantitySelector from '../components/QuantitySelector';
+import AddToCartButton from '../components/AddToCartButton';
 
 
 function ProductDetail() {
@@ -83,9 +84,7 @@ function ProductDetail() {
             
           <div className='grid grid-cols-2 gap-1.5'>
 
-            <button className="bg-amber-500 hover:bg-amber-600 h-10 text-white px-4 py-2 rounded-md transition-all duration-200 text-sm font-medium mt-4">
-              Add to Cart
-            </button>
+            <AddToCartButton product={product}/>
             <button className="bg-slate-800 hover:bg-slate-900 text-white px-4 py-2 rounded-md transition-all duration-200 text-sm font-medium mt-4">
               Buy Now
             </button>

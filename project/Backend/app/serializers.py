@@ -24,13 +24,14 @@ class OrderItemSerializers(serializers.ModelSerializer):
 
 
 class OrderSerializers(serializers.ModelSerializer):
+    # nested serializer
     items = OrderItemSerializers(many=True)
     class Meta:
         model = Order
         fields = ['address', 'contact_no', 'email', 'payment_method', 'status', 'items', 'id', 'created_at', 'total_price']
     
     def create(self, validated_data):
-        items_data = validated_data.pop('item')
+        items_data = validated_data.pop('items')
         user = self.context['request'].user
         
         order = Order.objects.create(
@@ -39,7 +40,7 @@ class OrderSerializers(serializers.ModelSerializer):
             
         )
         for item_data in items_data:
-            product = items_data['product']
+            product = item_data['product']
             price = product.price
             quantity = item_data['quantity']
 

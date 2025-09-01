@@ -9,6 +9,7 @@ import {
     removeCartItem,
 } from '../redux/slice/cartSlice.js';
 import { useCart } from '../api/fetchApi'; // Make sure this path is correct
+import OrderSummary from '../components/OrderSummary.jsx';
 
 function CartPage() {
     const dispatch = useDispatch();
@@ -18,16 +19,8 @@ function CartPage() {
 
     // Use a derived state for cart items and totals from React Query's data
     const cartItems = cartData?.items || [];
-    const totalPrice = cartItems.reduce((sum, item) => sum + (parseFloat(item.product_details.price)*item.quantity), 0);
-    const totalQuantity = cartItems.reduce((sum, item) => sum + item.quantity, 0)
-     // Assuming totalItems is just the count of unique products
-
-    // When an item is updated or removed, we want to refetch the cart
-    // This effect will re-run `useCart` query after a dispatch action if needed.
-    // However, it's generally better to use onSuccess callbacks for mutations
-    // in conjunction with queryClient.invalidateQueries(['cart']) for immediate updates.
-
-    // Handle button clicks to dispatch async thunks
+    
+    
     const handleIncrementQty = async (item, currentQuantity) => {
         try {
             await dispatch(updateCartItem({ 
@@ -37,7 +30,7 @@ function CartPage() {
             refetch(); // Refetch the cart data after successful update
         } catch (err) {
             console.error("Failed to increment quantity:", err);
-            // Optionally show a toast error
+            
         }
     };
 
@@ -152,7 +145,7 @@ function CartPage() {
 
                         <div className="p-6">
                             <div className="flex justify-between items-center">
-                                <Link to="/products" className="text-blue-600 hover:text-blue-800 font-medium">
+                                <Link to="/products" className="text-yellow-600 hover:text-yellow-800 font-medium">
                                     <i data-lucide="arrow-left" className="w-4 h-4 inline mr-2"></i>
                                     Continue Shopping
                                 </Link>
@@ -168,40 +161,7 @@ function CartPage() {
                     </div>
                 </div>
 
-                <div className="lg:col-span-1">
-                    <div className="bg-white rounded-lg shadow-md p-6 sticky top-24">
-                        <h3 className="text-lg font-semibold text-gray-900 mb-4">Order Summary</h3>
-                        <div className="space-y-3 mb-6">
-                            <div className="flex justify-between">
-                                <span className="text-gray-600">Subtotal ({totalQuantity} items)</span>
-                                <span className="font-semibold">${totalPrice}</span>
-                            </div>
-                            <div className="flex justify-between">
-                                <span className="text-gray-600">Shipping</span>
-                                <span className="font-semibold">$9.99</span>
-                            </div>
-                            <div className="flex justify-between">
-                                <span className="text-gray-600">Tax</span>
-                                <span className="font-semibold">$64.00</span>
-                            </div>
-                            <hr className="border-gray-200" />
-                            <div className="flex justify-between text-lg font-bold">
-                                <span>Total</span>
-                                <span>${(totalPrice + 9.99 + 64.00)}</span>
-                            </div>
-                        </div>
-                        <Link
-                            to="/checkout"
-                            className="w-full bg-blue-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-blue-700 transition-colors block text-center"
-                        >
-                            Proceed to Checkout
-                        </Link>
-                        <div className="text-center text-sm text-gray-500 mt-4">
-                            <i data-lucide="shield-check" className="w-4 h-4 inline mr-1"></i>
-                            Secure checkout with SSL encryption
-                        </div>
-                    </div>
-                </div>
+                <OrderSummary/>
             </div>
         </div>
     );

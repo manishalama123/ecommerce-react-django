@@ -6,6 +6,7 @@ import { toast } from 'react-toastify';
 import { useCategories, useProducts } from '../api/fetchApi';
 
 import { addItemToCart } from '../redux/slice/cartSlice';
+import AddToCartButton from '../components/AddToCartButton';
 
 function ProductsPage() {
   const dispatch = useDispatch();
@@ -16,26 +17,26 @@ function ProductsPage() {
   const { data, isLoading, isError, error, refetch } = useProducts(selectedCategory === 'all' ? '' : selectedCategory);
 
 
-  const handleAddToCart = async (product) => {
-    try {
-      const item = {
-        // ✅ Change this key from `product_id` to `product`
-        product: product.id,
-        quantity: 1,
-      };
-      await dispatch(addItemToCart(item)).unwrap();
-      toast.success("Item added to cart!");
-      console.log("Product object:", product);
-      console.log("Product ID:", product.id);
+  // const handleAddToCart = async (product) => {
+  //   try {
+  //     const item = {
+  //       // ✅ Change this key from `product_id` to `product`
+  //       product: product.id,
+  //       quantity: 1,
+  //     };
+  //     await dispatch(addItemToCart(item)).unwrap();
+  //     toast.success("Item added to cart!");
+  //     console.log("Product object:", product);
+  //     console.log("Product ID:", product.id);
 
-    } catch (error) {
-      console.error("Failed to add to cart:", error);
-      toast.error("Failed to add item to cart.");
-      console.log("Product object:", product);
-      console.log("Product ID:", product.id);
+  //   } catch (error) {
+  //     console.error("Failed to add to cart:", error);
+  //     toast.error("Failed to add item to cart.");
+  //     console.log("Product object:", product);
+  //     console.log("Product ID:", product.id);
 
-    }
-  };
+  //   }
+  // };
 
   const handleCategoryClick = (category) => {
     console.log('Category clicked:', category); // Debug log
@@ -178,13 +179,14 @@ function ProductsPage() {
                       </span>
                     </div>
 
-                    <button
+                    {/* <button
                       onClick={() => { handleAddToCart(product) }}
                       className="w-full bg-amber-500 hover:bg-amber-600 text-white px-4 py-2 rounded-lg transition-all duration-200 text-xs font-medium flex items-center justify-center space-x-1"
                     >
                       <ShoppingCart className="w-3 h-3" />
                       <span>Add to Cart</span>
-                    </button>
+                    </button> */}
+                    <AddToCartButton product={product} />
                   </div>
                 </Link>
               ))}

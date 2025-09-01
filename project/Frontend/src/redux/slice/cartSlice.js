@@ -138,6 +138,9 @@ const cartSlice = createSlice({
             // --- Handlers for adding an item ---
             .addCase(addItemToCart.fulfilled, (state, action) => {
                 const newCartItem = action.payload; // from backend
+                if (!Array.isArray(state.cartItems)) {
+                    state.cartItems = [];
+                }
             
                 const existing = state.cartItems.find(
                     item => item.product === newCartItem.product  // use product ID, not product_details
