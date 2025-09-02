@@ -71,7 +71,8 @@ class OrderCreateView(generics.CreateAPIView):
     def create(self, request, *args, **kwargs):
         serializers = self.get_serializer(data = request.data)
         serializers.is_valid(raise_exception = True)
-        order = Order.save()
+        order = serializers.save()
+        payment_method = request.data.get("payment_method")
 
         if payment_method == "cod":
             order.save()

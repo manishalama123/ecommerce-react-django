@@ -1,18 +1,59 @@
 import React from "react";
 import { useForm } from "react-hook-form";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux"
 import OrderSummary from "../components/OrderSummary";
+import { baseRequest } from "../utils/baseRequest";
+import { toast } from "react-hot-toast"
+import { clearCart } from "../redux/slice/cartSlice";
 
 const CheckoutPage = () => {
-  // ✅ must be inside component
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { cartItems } = useSelector(state => state.cart)
+
+  const mappedItems = cartItems.map(item => ({
+    product: item.product,
+    quantity: item.quantity
+  }))
   const { register, handleSubmit } = useForm();
+
+  const onSubmit = async (data) => {
+    console.log("=== CART DEBUG ===")
+    console.log("Raw cartItems from Redux:", cartItems) // Fix: use cartItems
+    console.log("CartItems count:", cartItems.length)
+    
+    cartItems.forEach((item, index) => {
+      console.log(`Item ${index}:`, {
+        id: item.id,
+        product: item.product, // Add this to see the product ID
+        title: item.title || item.name,
+        quantity: item.quantity,
+        price: item.price
+      })
+    })
+
+
+    console.log("Mapped items for order:", mappedItems)
+
+    // Fix: send mapped items, not raw cartItems
+    const orderData = { ...data, items: mappedItems }
+    console.log("Final orderData:", orderData)
+    
+    try {
+      const response = await baseRequest.post('/order/create/', orderData);
+      toast.success("Order placed successfully!")
+      console.log("Success:", response.data);
+      
+      // Clear cart only after successful order
+      dispatch(clearCart())
+      
+    } catch (error) {
+      toast.error("Order failed!")
+      console.log("❌ ERROR DATA:", error.response?.data)
+    }
+  }
   
-
-
-  const onSubmit = (data) => {
-    console.log("Form Data:", data);
-  };
-
   return (
     <div className="my-16 px-4">
       <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -21,7 +62,7 @@ const CheckoutPage = () => {
           <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">
             Checkout
           </h2>
-          <form className="space-y-5" onSubmit={handleSubmit(onSubmit)}>
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-5" >
             {/* Email */}
             <div>
               <label className="block mb-1 font-medium text-gray-700">Email</label>
@@ -84,7 +125,7 @@ const CheckoutPage = () => {
 
         {/* Order Summary */}
         <OrderSummary
-        showCheckoutButton={false}
+          showCheckoutButton={false}
         />
       </div>
     </div>

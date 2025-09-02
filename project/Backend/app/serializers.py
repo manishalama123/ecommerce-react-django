@@ -26,9 +26,13 @@ class OrderItemSerializers(serializers.ModelSerializer):
 class OrderSerializers(serializers.ModelSerializer):
     # nested serializer
     items = OrderItemSerializers(many=True)
+    id = serializers.ReadOnlyField()
+    created_at = serializers.ReadOnlyField()
+    total_price = serializers.ReadOnlyField()
+    status = serializers.CharField(default='pending')
     class Meta:
         model = Order
-        fields = ['address', 'contact_no', 'email', 'payment_method', 'status', 'items', 'id', 'created_at', 'total_price']
+        fields = ['address', 'contact_number', 'email', 'payment_method', 'status', 'items', 'id', 'created_at', 'total_price']
     
     def create(self, validated_data):
         items_data = validated_data.pop('items')
@@ -41,14 +45,14 @@ class OrderSerializers(serializers.ModelSerializer):
         )
         for item_data in items_data:
             product = item_data['product']
-            price = product.price
             quantity = item_data['quantity']
 
-            orderItem.objects.create(
+            OrderItem.objects.create(
                 order = order,
                 product = product,
-                price = price,
+                price = product.price,
                 quantity = quantity
             )
         order.calculate_total()
         order.save()
+        return order

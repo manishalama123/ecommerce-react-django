@@ -49,3 +49,22 @@ class RemoveCartItemView(generics.DestroyAPIView):
     permission_classes = [IsAuthenticated]
     def get_queryset(self):
         return CartItem.objects.filter(cart__user=self.request.user)
+
+class ClearCartView(generics.GenericAPIView):
+    permission_classes = [IsAuthenticated]
+    
+    def delete(self, request, *args, **kwargs):
+        try:
+            cart = Cart.objects.get(user=request.user)
+            # Delete all cart items for this user's cart
+            CartItem.objects.filter(cart=cart).delete()
+            
+            return Response(
+                {"message": "Cart cleared successfully"}, 
+                status=status.HTTP_200_OK
+            )
+        except Cart.DoesNotExist:
+            return Response(
+                {"message": "Cart not found"}, 
+                status=status.HTTP_404_NOT_FOUND
+            )

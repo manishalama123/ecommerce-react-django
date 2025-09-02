@@ -7,6 +7,7 @@ import {
     fetchCart,
     updateCartItem,
     removeCartItem,
+    clearCart
 } from '../redux/slice/cartSlice.js';
 import { useCart } from '../api/fetchApi'; // Make sure this path is correct
 import OrderSummary from '../components/OrderSummary.jsx';
@@ -61,9 +62,13 @@ function CartPage() {
         }
     };
 
-    const handleClearCart = () => {
-        // This functionality needs a dedicated thunk that clears all items from the backend
-        alert("Clear Cart functionality requires a new thunk to be implemented and dispatched.");
+    const handleClearCart = async() => {
+        try {
+            await dispatch(clearCart()).unwrap();
+            refetch()
+        } catch (error) {
+            console.log(error);
+        }
     };
 
 

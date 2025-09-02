@@ -90,6 +90,24 @@ export const removeCartItem = createAsyncThunk('cart/removeCartItem', async (id,
         return rejectWithValue(error.response.data);
     }
 });
+export const clearCart = createAsyncThunk('cart/clearCart', async (_, { rejectWithValue }) => {
+    try {
+        const token = getToken();
+        if (!token) {
+            throw new Error("Authentication token not found.");
+        }
+        const config = {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        };
+        await axios.delete(`${API_URL}clear/`, config);
+        return []; // Return empty array
+    } catch (error) {
+        return rejectWithValue(error.response?.data);
+    }
+});
+
 
 const initialState = {
     cartItems: [],
@@ -180,6 +198,12 @@ const cartSlice = createSlice({
                 state.totalPrice = totalPrice;
                 state.totalQuantity = totalQuantity;
                 state.totalItems = totalItems;
+            })
+            .addCase(clearCart.fulfilled, (state) => {
+                state.cartItems = [];
+                state.totalPrice = 0;
+                state.totalQuantity = 0;
+                state.totalItems = 0;
             })
 
             // You should also add pending and rejected cases for each thunk
