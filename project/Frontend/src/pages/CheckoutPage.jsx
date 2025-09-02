@@ -19,21 +19,7 @@ const CheckoutPage = () => {
   const { register, handleSubmit } = useForm();
 
   const onSubmit = async (data) => {
-    console.log("=== CART DEBUG ===")
-    console.log("Raw cartItems from Redux:", cartItems) // Fix: use cartItems
-    console.log("CartItems count:", cartItems.length)
     
-    cartItems.forEach((item, index) => {
-      console.log(`Item ${index}:`, {
-        id: item.id,
-        product: item.product, // Add this to see the product ID
-        title: item.title || item.name,
-        quantity: item.quantity,
-        price: item.price
-      })
-    })
-
-
     console.log("Mapped items for order:", mappedItems)
 
     // Fix: send mapped items, not raw cartItems
@@ -42,9 +28,12 @@ const CheckoutPage = () => {
     
     try {
       const response = await baseRequest.post('/order/create/', orderData);
+      if(orderData.payment_method === "esewa"){
+        navigate('/esewa', {state:{esewaData: response.data}})
+      }
       toast.success("Order placed successfully!")
       console.log("Success:", response.data);
-      
+     
       // Clear cart only after successful order
       dispatch(clearCart())
       

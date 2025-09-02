@@ -15,6 +15,7 @@ import ProtectedRoute from './utils/ProtectedRoute';
 import AuthRedirect from './utils/AuthRedirect';
 import { Toaster } from 'react-hot-toast';
 import { useDispatch, useSelector } from 'react-redux';
+import EsewaForm from './pages/EsewaForm';
 
 function App() {
 
@@ -45,6 +46,7 @@ function App() {
           <Route path='/cart' element={<CartPage />} />
           <Route path='/checkout' element={<CheckoutPage />} />
           <Route path='/userprofile' element={<UserProfilePage />} />
+          <Route path='/esewa' element={<EsewaForm/>} />
         </Route>
 
       </Route>
