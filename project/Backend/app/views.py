@@ -9,6 +9,8 @@ import hmac, hashlib, base64, uuid, json
 from rest_framework import status
 from django.shortcuts import get_object_or_404
 from rest_framework.views import APIView
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
 
 # Create your views here.
 
@@ -118,4 +120,35 @@ class OrderCreateView(generics.CreateAPIView):
 
             
         return Response({"message": "Invalid payment method"})
-    
+
+@method_decorator(csrf_exempt, name='dispatch') 
+class EsewaSuccessAPIView(APIView):
+    def post(self, request, *args, **kwargs):
+        print("🚨 WEBHOOK CALLED!")
+        order_id = request.data.get("order_id")
+        data = request.data.get("data")
+
+        if not order_id or not data:
+            return Response(
+                {"message": "Missing order_id or data"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        order = get_object_or_404(Order, id=order_id)
+
+        try:
+            decoded_data = base64.b64decode(data).decode("utf-8")
+            data_dict = json.loads(decoded_data)
+        except Exception as e:
+            return Response(
+                {"message": f"Failed to decode data: {str(e)}"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        status_value = data_dict.get("status", "").upper()
+
+        if status_value == "COMPLETE":
+            order.status = "paid"
+            order.save()
+            return Response({"message": "Payment successful. Order completed."}, status=status.HTTP_200_OK)
+        else:
+            return Response({"message": f"Transaction status: {status_value}"}, status=status.HTTP_200_OK)
