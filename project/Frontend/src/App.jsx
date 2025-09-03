@@ -17,6 +17,7 @@ import { Toaster } from 'react-hot-toast';
 import { useDispatch, useSelector } from 'react-redux';
 import EsewaForm from './pages/EsewaForm';
 import EsewaSuccessPage from './pages/EsewaSuccessPage';
+import OrderListPage from './pages/OrderListPage';
 
 function App() {
 
@@ -47,6 +48,7 @@ function App() {
           <Route path='/cart' element={<CartPage />} />
           <Route path='/checkout' element={<CheckoutPage />} />
           <Route path='/userprofile' element={<UserProfilePage />} />
+          <Route path='/order/list' element={<OrderListPage/>}/>
           <Route path='/esewa' element={<EsewaForm/>} />
           <Route path='/esewa/success/:id' element={<EsewaSuccessPage/>}/>
         </Route>

@@ -1,3 +1,4 @@
+import { useSelector } from "react-redux";
 import { baseRequest } from "../utils/baseRequest";
 import { useQuery } from "@tanstack/react-query";
 
@@ -41,3 +42,21 @@ export const useCart = () => {
         }
     });
 };
+
+// to fetch order
+export const useOrder = ()=>{
+    const {user} = useSelector(state => state.auth)
+    return(
+      useQuery({
+        queryKey:['orders'],
+        queryFn: async()=>{
+          const response = await baseRequest.get(`/order/lists/`,{
+            headers:{
+              Authorization: `Bearer ${user?.access}`
+            }
+          })
+          return response.data
+        }
+      })
+    )
+  }
