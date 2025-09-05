@@ -123,6 +123,7 @@ class OrderCreateView(generics.CreateAPIView):
 
 @method_decorator(csrf_exempt, name='dispatch') 
 class EsewaSuccessAPIView(APIView):
+    permission_classes = [AllowAny]
     def post(self, request, *args, **kwargs):
         print("🚨 WEBHOOK CALLED!")
         order_id = request.data.get("order_id")

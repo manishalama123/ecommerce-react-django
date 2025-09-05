@@ -48,7 +48,7 @@ function App() {
           <Route path='/cart' element={<CartPage />} />
           <Route path='/checkout' element={<CheckoutPage />} />
           <Route path='/userprofile' element={<UserProfilePage />} />
-          <Route path='/order/list' element={<OrderListPage/>}/>
+          <Route path='/order/list' element={<OrderListPage/>}/>e
           <Route path='/esewa' element={<EsewaForm/>} />
           <Route path='/esewa/success/:id' element={<EsewaSuccessPage/>}/>
         </Route>
