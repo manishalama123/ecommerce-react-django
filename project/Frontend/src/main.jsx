@@ -9,6 +9,7 @@ import { store, persistor } from './redux/store/store.js'
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { PersistGate } from 'redux-persist/integration/react';
+import { GoogleOAuthProvider } from '@react-oauth/google';
 
 const queryClient = new QueryClient()
 createRoot(document.getElementById('root')).render(
@@ -17,7 +18,10 @@ createRoot(document.getElementById('root')).render(
     <PersistGate loading={null} persistor={persistor}>
       <QueryClientProvider client={queryClient}>
         <BrowserRouter>
-          <App />
+          <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
+          
+            <App />
+          </GoogleOAuthProvider>
         </BrowserRouter>
       </QueryClientProvider>
     </PersistGate>
