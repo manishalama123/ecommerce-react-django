@@ -11,7 +11,7 @@ const authSlice = createSlice({
     initialState,
     reducers: {
         loginSuccess: (state, action) => {
-            const { access, email, first_name, last_name, username } = action.payload;
+            const { access, email, first_name, last_name, username, role } = action.payload;
 
 
             if (access) {
@@ -26,6 +26,7 @@ const authSlice = createSlice({
                     first_name,
                     last_name,
                     username,
+                    role,
                 };
             } else {
                 console.error("Access token not found in login response.");

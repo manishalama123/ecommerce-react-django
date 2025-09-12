@@ -16,13 +16,19 @@ const LoginPage=()=> {
     });
     const navigate = useNavigate()
     const dispatch = useDispatch()
+    console.log("🔍 Login page - from:", location.state?.from)
     const onSubmit = async (data)=>{
         try{
             const response = await baseRequest.post('/auth/login/', data)
             console.log(response.data);
             toast.success("User logged in successfully.")
             dispatch(loginSuccess(response.data))
-            navigate('/')
+            if(response.data.role === "admin"){
+                navigate('/admin/main')
+            }
+            else{
+                navigate('/')
+            }
         }
         catch(error)
         {

@@ -18,6 +18,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import EsewaForm from './pages/EsewaForm';
 import EsewaSuccessPage from './pages/EsewaSuccessPage';
 import OrderListPage from './pages/OrderListPage';
+import AdminRoute from './utils/AdminRoute';
+import Dashboard from './pages/admin/Dashboard';
 
 function App() {
 
@@ -25,10 +27,14 @@ function App() {
   const token = useSelector((state) => state.auth?.access);
 
 
-  
+
   return <>
     <Routes>
-
+      {/* Auth Redirect Routes */}
+      <Route element={<AuthRedirect />}>
+        <Route path='/register' element={<RegisterPage />} />
+        <Route path='/login' element={<LoginPage />} />
+      </Route>
       <Route path="/" element={<FrontendUser />}>
         <Route index element={<HomePage />} />
         <Route path='/about' element={<AboutPage />} />
@@ -37,27 +43,27 @@ function App() {
         <Route path='/products' element={<ProductsPage />} />
 
 
-        {/* Auth Redirect Routes */}
-        <Route element={<AuthRedirect />}>
-          <Route path='/register' element={<RegisterPage />} />
-          <Route path='/login' element={<LoginPage />} />
-        </Route>
+
 
         {/* Protected Route */}
         <Route element={<ProtectedRoute />}>
           <Route path='/cart' element={<CartPage />} />
           <Route path='/checkout' element={<CheckoutPage />} />
           <Route path='/userprofile' element={<UserProfilePage />} />
-          <Route path='/order/list' element={<OrderListPage/>}/>e
-          <Route path='/esewa' element={<EsewaForm/>} />
-          <Route path='/esewa/success/:id' element={<EsewaSuccessPage/>}/>
+          <Route path='/order/list' element={<OrderListPage />} />
+          <Route path='/esewa' element={<EsewaForm />} />
+          <Route path='/esewa/success/:id' element={<EsewaSuccessPage />} />
         </Route>
 
+      </Route>
+      <Route path='/admin/*' element={<AdminRoute />}>
+        <Route path='main' element={<Dashboard />} />
       </Route>
     </Routes>
     <Toaster position='top-center' />
 
   </>
 }
+
 
 export default App;
