@@ -19,7 +19,10 @@ import EsewaForm from './pages/EsewaForm';
 import EsewaSuccessPage from './pages/EsewaSuccessPage';
 import OrderListPage from './pages/OrderListPage';
 import AdminRoute from './utils/AdminRoute';
-import Dashboard from './pages/admin/Dashboard';
+import ProductListPage from './pages/admin/ProductListPage';
+import AdminLayout from './layout/AdminLayout';
+import AddProductPage from './pages/admin/AddProductPage';
+
 
 function App() {
 
@@ -56,8 +59,10 @@ function App() {
         </Route>
 
       </Route>
-      <Route path='/admin/*' element={<AdminRoute />}>
-        <Route path='main' element={<Dashboard />} />
+      <Route path='/admin' element={<AdminRoute />}>
+        <Route path='main' index element={<AdminLayout/>} />
+        <Route path='product/list' element={<ProductListPage/>}/>
+        <Route path='product/add' element={<AddProductPage/>}/>
       </Route>
     </Routes>
     <Toaster position='top-center' />
