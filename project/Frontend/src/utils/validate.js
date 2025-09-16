@@ -42,3 +42,25 @@ export const loginFormValidationSchema = yup.object().shape({
     username: yup.string().required("Username is required"),
     password: yup.string().required("Password is required")
 })
+
+export const productFormValidationSchema = yup.object().shape({
+    title: yup.string().required("Product name is required"),
+    category: yup.string().required("Category is required"),
+    price: yup
+      .number()
+      .typeError("Price must be a number")
+      .positive("Price must be greater than 0")
+      .required("Price is required"),
+    quantity: yup
+      .number()
+      .typeError("Quantity must be a number")
+      .integer("Quantity must be an integer")
+      .min(1, "Quantity must be at least 1")
+      .required("Quantity is required"),
+    description: yup.string().required("Description is required"),
+    image: yup
+      .mixed()
+      .test("fileRequired", "Image is required", (value) => {
+        return value && value.length > 0;
+      }),
+  });
