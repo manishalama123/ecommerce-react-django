@@ -45,6 +45,7 @@ export const loginFormValidationSchema = yup.object().shape({
 
 export const productFormValidationSchema = yup.object().shape({
     title: yup.string().required("Product name is required"),
+    description: yup.string().required("Description is required"),
     category: yup.string().required("Category is required"),
     price: yup
       .number()
@@ -57,10 +58,20 @@ export const productFormValidationSchema = yup.object().shape({
       .integer("Quantity must be an integer")
       .min(1, "Quantity must be at least 1")
       .required("Quantity is required"),
-    description: yup.string().required("Description is required"),
+    
     image: yup
       .mixed()
       .test("fileRequired", "Image is required", (value) => {
         return value && value.length > 0;
+      })
+      .test("fileType", "Only image files are allowed", (value) => {
+        if (!value || !value.length) return true; // Skip if no file (handled by required test)
+        const file = value[0];
+        return file && file.type.startsWith('image/');
+      })
+      .test("fileSize", "File size must be less than 10MB", (value) => {
+        if (!value || !value.length) return true; // Skip if no file
+        const file = value[0];
+        return file && file.size <= 10 * 1024 * 1024; // 10MB in bytes
       }),
   });
