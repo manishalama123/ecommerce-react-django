@@ -22,6 +22,7 @@ import AdminRoute from './utils/AdminRoute';
 import ProductListPage from './pages/admin/ProductListPage';
 import AdminLayout from './layout/AdminLayout';
 import AddProductPage from './pages/admin/AddProductPage';
+import CategoryListPage from './pages/admin/CategoryListPage';
 
 
 function App() {
@@ -63,6 +64,7 @@ function App() {
         <Route path='main' index element={<AdminLayout/>} />
         <Route path='product/list' element={<ProductListPage/>}/>
         <Route path='product/add' element={<AddProductPage/>}/>
+        <Route path='category/list' element={<CategoryListPage/>}/>
       </Route>
     </Routes>
     <Toaster position='top-center' />

@@ -51,9 +51,10 @@ const SideBar = () => {
           <p className="text-gray-400 uppercase text-xs mb-2">Categories</p>
           <ul>
             <li className="mb-2">
-              <button className="flex items-center gap-2 w-full p-2 rounded-md hover:bg-gray-100">
-                <FaFolder /> Category List
-              </button>
+              <Link to='category/list' className="flex items-center gap-2 w-full p-2 rounded-md hover:bg-gray-100">
+                <FaFolder /> 
+                <span className="text-sm">Category List</span>
+              </Link>
             </li>
             <li className="mb-2">
               <button className="flex items-center gap-2 w-full p-2 rounded-md hover:bg-gray-100">
