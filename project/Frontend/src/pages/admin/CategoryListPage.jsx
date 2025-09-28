@@ -1,9 +1,10 @@
 import React from "react";
 import CategoryListCard from "../../components/admin/CategoryListCard";
-import { useCategories } from "../../api/fetchApi";
+import { useCategories, useProducts } from "../../api/fetchApi";
 
 const CategoryListPage = () => {
   const { data: categories, error, isLoading } = useCategories();
+  const {data: products} = useProducts();
   return (
     <div className="flex-1 p-6 bg-gray-50 min-h-screen">
       {/* Top Section */}
@@ -30,9 +31,15 @@ const CategoryListPage = () => {
         <p>{error.message}</p>
       ) : (
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {categories.map((cat) => (
-            <CategoryListCard key={cat.id} {...cat} />
-          ))}
+          
+          {categories.map((cat) => {
+            const productCount = products ? products.filter((p)=> p.category === cat.id).length : 0;
+            return(
+              <CategoryListCard key={cat.id} {...cat} products={productCount} created={cat.created_at}/>
+              
+            )
+            
+})}
         </div>
       )}
     </div>

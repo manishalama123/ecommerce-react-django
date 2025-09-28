@@ -29,8 +29,13 @@ const CategoryListCard = ({ id, name, description, products, status, created }) 
 
       {/* Footer Info */}
       <div className="flex justify-between items-center mt-4 text-sm text-gray-500">
-        <span>{products} products</span>
-        <span>Created: {created}</span>
+        <span> Products: {products}</span>
+        <span>Created: {created ? new Date(created).toLocaleDateString("en-US",{
+          year: "numeric",
+          month: "short",
+          day: "numeric",
+        }): " N/A"
+        }</span>
       </div>
 
       {/* Actions */}
