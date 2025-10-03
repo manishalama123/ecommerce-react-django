@@ -57,9 +57,10 @@ const SideBar = () => {
               </Link>
             </li>
             <li className="mb-2">
-              <button className="flex items-center gap-2 w-full p-2 rounded-md hover:bg-gray-100">
-                <FaPlus /> Add Category
-              </button>
+              <Link to='category/add' className="flex items-center gap-2 w-full p-2 rounded-md hover:bg-gray-100">
+                <FaPlus /> 
+                <span className="text-sm">Add Category</span>
+              </Link>
             </li>
           </ul>
         </div>

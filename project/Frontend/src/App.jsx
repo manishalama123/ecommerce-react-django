@@ -23,6 +23,7 @@ import ProductListPage from './pages/admin/ProductListPage';
 import AdminLayout from './layout/AdminLayout';
 import AddProductPage from './pages/admin/AddProductPage';
 import CategoryListPage from './pages/admin/CategoryListPage';
+import AddCategoryPage from './pages/admin/AddCategoryPage';
 
 
 function App() {
@@ -65,6 +66,7 @@ function App() {
         <Route path='product/list' element={<ProductListPage/>}/>
         <Route path='product/add' element={<AddProductPage/>}/>
         <Route path='category/list' element={<CategoryListPage/>}/>
+        <Route path='category/add' element={<AddCategoryPage/>}/>
       </Route>
     </Routes>
     <Toaster position='top-center' />

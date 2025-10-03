@@ -27,7 +27,6 @@ const CategoryListCard = ({ id, name, description, products, status, created,onE
       {/* Description */}
       <p className="text-sm text-gray-600 mt-3">{description}</p>
 
-      {/* Footer Info */}
       <div className="flex justify-between items-center mt-4 text-sm text-gray-500">
         <span> Products: {products}</span>
         <span>Created: {created ? new Date(created).toLocaleDateString("en-US",{

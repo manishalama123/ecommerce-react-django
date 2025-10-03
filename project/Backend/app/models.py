@@ -4,6 +4,8 @@ from django.contrib.auth.models import User
 # Create your models here.
 class Category(models.Model):
     name = models.CharField(max_length=100, unique=True)
+    description = models.TextField(blank=True, null=True, help_text="A detailed description for the category")
+    image = models.ImageField(upload_to='category/', blank=True, null=True, help_text="The main representing the category.")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     
