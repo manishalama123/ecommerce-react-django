@@ -1,10 +1,41 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import CategoryListCard from "../../components/admin/CategoryListCard";
 import { useCategories, useProducts } from "../../api/fetchApi";
+import toast from "react-hot-toast";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { baseRequest } from "../../utils/baseRequest";
 
 const CategoryListPage = () => {
   const { data: categories, error, isLoading } = useCategories();
   const {data: products} = useProducts();
+  const navigate = useNavigate();
+  const queryClinet = useQueryClient();
+
+  //  DELETE Mutation
+  const deleteMutation = useMutation({
+    mutationFn: async (id) =>{
+      await baseRequest.delete(`/categories/${id}/`)
+    },
+    onSuccess: ()=>{
+      queryClinet.invalidateQueries(["categories"])
+      toast.success("Category deleted successfully")
+    },
+    onError: (err)=>{
+      console.error(err);
+      toast.error("Failed to delete category")
+    },
+  })
+
+  
+
+  const handleDelete = (id)=> deleteMutation.mutate(id);
+
+  // EDIT 
+  const handleEdit = (cat) => {
+    navigate(`/admin/product/list`)
+  }
+  
   return (
     <div className="flex-1 p-6 bg-gray-50 min-h-screen">
       {/* Top Section */}
@@ -35,7 +66,11 @@ const CategoryListPage = () => {
           {categories.map((cat) => {
             const productCount = products ? products.filter((p)=> p.category === cat.id).length : 0;
             return(
-              <CategoryListCard key={cat.id} {...cat} products={productCount} created={cat.created_at}/>
+              <CategoryListCard key={cat.id} {...cat} 
+              products={productCount}
+              created={cat.created_at} 
+              onEdit={()=>handleEdit(cat)} 
+              onDelete={handleDelete} />
               
             )
             
