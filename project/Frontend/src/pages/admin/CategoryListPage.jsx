@@ -8,34 +8,39 @@ import { baseRequest } from "../../utils/baseRequest";
 
 const CategoryListPage = () => {
   const { data: categories, error, isLoading } = useCategories();
-  const {data: products} = useProducts();
+  const { data: products } = useProducts();
   const navigate = useNavigate();
-  const queryClinet = useQueryClient();
+  const queryClient = useQueryClient();
 
   //  DELETE Mutation
   const deleteMutation = useMutation({
-    mutationFn: async (id) =>{
+    mutationFn: async (id) => {
       await baseRequest.delete(`/categories/${id}/`)
     },
-    onSuccess: ()=>{
-      queryClinet.invalidateQueries(["categories"])
+    onSuccess: () => {
+      queryClient.invalidateQueries(["categories"])
       toast.success("Category deleted successfully")
     },
-    onError: (err)=>{
+    onError: (err) => {
       console.error(err);
       toast.error("Failed to delete category")
     },
   })
 
-  
 
-  const handleDelete = (id)=> deleteMutation.mutate(id);
+
+  const handleDelete = (id) => deleteMutation.mutate(id);
 
   // EDIT 
   const handleEdit = (cat) => {
     navigate(`/admin/product/list`)
   }
-  
+  const handleViewProducts = (categoryId) => {
+    navigate(`/admin/product/list?category_id=${categoryId}`)
+  }
+  const handleAddCategory = () => {
+    navigate("/admin/category/add");
+  };
   return (
     <div className="flex-1 p-6 bg-gray-50 min-h-screen">
       {/* Top Section */}
@@ -62,19 +67,20 @@ const CategoryListPage = () => {
         <p>{error.message}</p>
       ) : (
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          
+
           {categories.map((cat) => {
-            const productCount = products ? products.filter((p)=> p.category === cat.id).length : 0;
-            return(
-              <CategoryListCard key={cat.id} {...cat} 
-              products={productCount}
-              created={cat.created_at} 
-              onEdit={()=>handleEdit(cat)} 
-              onDelete={handleDelete} />
-              
+            const productCount = products ? products.filter((p) => p.category === cat.id).length : 0;
+            return (
+              <CategoryListCard key={cat.id} {...cat}
+                products={productCount}
+                created={cat.created_at}
+                onEdit={() => handleEdit(cat)}
+                onDelete={handleDelete}
+                onViewProducts={handleViewProducts} />
+
             )
-            
-})}
+
+          })}
         </div>
       )}
     </div>

@@ -1,17 +1,32 @@
 import React from 'react';
 import { useProducts } from '../../api/fetchApi';
+import { Navigate, useNavigate, useSearchParams } from 'react-router-dom';
 
 const ProductListPage = () => {
+  const navigate = useNavigate();
   const { data: products = [], isError, isLoading, error } = useProducts();
-
+  const [searchParams] = useSearchParams();
+  const categoryIdParam = searchParams.get('category_id');
+  const filterCategoryId = categoryIdParam ? parseInt(categoryIdParam, 10) : null;
+  const productsToDisplay = products.filter((product) => {
+    if (!filterCategoryId) {
+      return true;
+    }
+    return product.category === filterCategoryId || product.category?.id === filterCategoryId;;
+  });
+  const pageTitle = filterCategoryId
+    ? `Products in Category ID: ${filterCategoryId}` // Title when filtered
+    : 'All Products'; // Title when viewing all
   if (isLoading) return <div className="p-6">Loading...</div>;
   if (isError) return <div className="p-6 text-red-500">Error: {error.message}</div>;
-
+  const handleAddProduct = ()=>{
+    navigate('/admin/product/add')
+  }
   return (
     <div className="flex-1 p-6 bg-gray-100 min-h-screen">
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-semibold text-gray-800">Products</h2>
-        <button className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md shadow-sm transition-colors duration-200">
+        <h2 className="text-2xl font-semibold text-gray-800">{pageTitle}</h2>
+        <button onClick={handleAddProduct} className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md shadow-sm transition-colors duration-200">
           + Add Product
         </button>
       </div>
@@ -29,8 +44,8 @@ const ProductListPage = () => {
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
-            {products.length > 0 ? (
-              products.map((product) => (
+            {productsToDisplay.length > 0 ? (
+              productsToDisplay.map((product) => (
                 <tr key={product.id}>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center">
@@ -43,16 +58,15 @@ const ProductListPage = () => {
                       </div>
                     </div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{product.category}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{product.category.name || product.category}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${product.price}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{product.stock}</td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span
-                      className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                        product.status === 'Active'
-                          ? 'bg-green-100 text-green-800'
-                          : 'bg-red-100 text-red-800'
-                      }`}
+                      className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${product.status === 'Active'
+                        ? 'bg-green-100 text-green-800'
+                        : 'bg-red-100 text-red-800'
+                        }`}
                     >
                       {product.status}
                     </span>
@@ -69,7 +83,10 @@ const ProductListPage = () => {
             ) : (
               <tr>
                 <td colSpan="6" className="px-6 py-4 text-center text-gray-500">
-                  No products found.
+                  {filterCategoryId
+                    ? `No products found in category ID ${filterCategoryId}.`
+                    : 'No products found.'
+                  }
                 </td>
               </tr>
             )}

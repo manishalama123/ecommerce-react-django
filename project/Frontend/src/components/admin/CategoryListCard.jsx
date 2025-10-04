@@ -1,7 +1,7 @@
 import React from "react";
 import { Edit, Trash2, Folder } from "lucide-react";
 
-const CategoryListCard = ({ id, name, description, products, status, created,onEdit, onDelete}) => {
+const CategoryListCard = ({ id, name, description, products, status, created,onEdit, onDelete, onViewProducts}) => {
   return (
     <div className="bg-white rounded-xl shadow-md p-5 border hover:shadow-lg transition">
       {/* Title */}
@@ -39,7 +39,7 @@ const CategoryListCard = ({ id, name, description, products, status, created,onE
 
       {/* Actions */}
       <div className="flex justify-between items-center mt-4">
-        <button className="text-blue-600 hover:underline">View Products</button>
+        <button onClick={()=>onViewProducts(id)} className="text-blue-600 hover:underline">View Products</button>
         <div className="flex gap-3">
           <button onClick={onEdit} className="text-green-600 hover:text-green-800">
             <Edit className="w-5 h-5" />
