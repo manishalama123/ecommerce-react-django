@@ -24,6 +24,7 @@ import AdminLayout from './layout/AdminLayout';
 import AddProductPage from './pages/admin/AddProductPage';
 import CategoryListPage from './pages/admin/CategoryListPage';
 import AddCategoryPage from './pages/admin/AddCategoryPage';
+import EditProductPage from './pages/admin/EditProductPage';
 
 
 function App() {
@@ -65,6 +66,7 @@ function App() {
         <Route path='main' index element={<AdminLayout/>} />
         <Route path='product/list' element={<ProductListPage/>}/>
         <Route path='product/add' element={<AddProductPage/>}/>
+        <Route path='product/edit/:id' element={<EditProductPage/>}/>
         <Route path='category/list' element={<CategoryListPage/>}/>
         <Route path='category/add' element={<AddCategoryPage/>}/>
       </Route>

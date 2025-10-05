@@ -1,6 +1,6 @@
 import React from 'react';
 import { useProducts } from '../../api/fetchApi';
-import { Navigate, useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { baseRequest } from '../../utils/baseRequest';
 import toast from 'react-hot-toast';
@@ -39,6 +39,8 @@ const ProductListPage = () => {
       console.error(err)
     }
   })
+
+ 
   if (isLoading) return <div className="p-6">Loading...</div>;
   if (isError) return <div className="p-6 text-red-500">Error: {error.message}</div>;
 
@@ -94,7 +96,7 @@ const ProductListPage = () => {
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                     <div className="flex items-center space-x-2">
                       <button className="text-blue-600 hover:text-blue-900">👁</button>
-                      <button className="text-yellow-600 hover:text-yellow-900">✏️</button>
+                      <button onClick={()=> navigate(`/admin/product/edit/${product.id}`)} className="text-yellow-600 hover:text-yellow-900">✏️</button>
                       <button onClick={() => deleteProduct(product.id)} className="text-red-600 hover:text-red-900">🗑</button>
                     </div>
                   </td>

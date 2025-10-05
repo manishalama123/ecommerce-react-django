@@ -59,21 +59,18 @@ export const productFormValidationSchema = yup.object().shape({
     .min(1, "Quantity must be at least 1")
     .required("Quantity is required"),
 
-  image: yup
-    .mixed()
-    .test("fileRequired", "Image is required", (value) => {
-      return value && value.length > 0;
-    })
-    .test("fileType", "Only image files are allowed", (value) => {
-      if (!value || !value.length) return true; // Skip if no file (handled by required test)
-      const file = value[0];
-      return file && file.type.startsWith('image/');
-    })
-    .test("fileSize", "File size must be less than 10MB", (value) => {
-      if (!value || !value.length) return true; // Skip if no file
-      const file = value[0];
-      return file && file.size <= 10 * 1024 * 1024; // 10MB in bytes
-    }),
+  // image: yup
+  //   .mixed()
+  //   .test("fileType", "Only image files are allowed", (value) => {
+  //     if (!value || !value.length) return true; // Skip if no file (handled by required test)
+  //     const file = value[0];
+  //     return file && file.type?.startsWith('image/');
+  //   })
+  //   .test("fileSize", "File size must be less than 10MB", (value) => {
+  //     if (!value || !value.length) return true; // Skip if no file
+  //     const file = value[0];
+  //     return file && file.size <= 10 * 1024 * 1024; // 10MB in bytes
+  //   }),
 });
 
 export const CategoryValidationSchema = yup.object().shape({
