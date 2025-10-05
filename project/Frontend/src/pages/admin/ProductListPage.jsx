@@ -1,10 +1,14 @@
 import React from 'react';
 import { useProducts } from '../../api/fetchApi';
 import { Navigate, useNavigate, useSearchParams } from 'react-router-dom';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { baseRequest } from '../../utils/baseRequest';
+import toast from 'react-hot-toast';
 
 const ProductListPage = () => {
   const navigate = useNavigate();
   const { data: products = [], isError, isLoading, error } = useProducts();
+  const queryClient = useQueryClient()
   const [searchParams] = useSearchParams();
   const categoryIdParam = searchParams.get('category_id');
   const filterCategoryId = categoryIdParam ? parseInt(categoryIdParam, 10) : null;
@@ -17,11 +21,27 @@ const ProductListPage = () => {
   const pageTitle = filterCategoryId
     ? `Products in Category ID: ${filterCategoryId}` // Title when filtered
     : 'All Products'; // Title when viewing all
-  if (isLoading) return <div className="p-6">Loading...</div>;
-  if (isError) return <div className="p-6 text-red-500">Error: {error.message}</div>;
-  const handleAddProduct = ()=>{
+
+  
+  const handleAddProduct = () => {
     navigate('/admin/product/add')
   }
+  const {mutate: deleteProduct} = useMutation({
+    mutationFn: async (id) => {
+      await baseRequest.delete(`/products/${id}/`)
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({queryKey: ['products']})
+      toast.success("Product deleted successfully")
+    },
+    onError: (err) => {
+      toast.error("An error occur")
+      console.error(err)
+    }
+  })
+  if (isLoading) return <div className="p-6">Loading...</div>;
+  if (isError) return <div className="p-6 text-red-500">Error: {error.message}</div>;
+
   return (
     <div className="flex-1 p-6 bg-gray-100 min-h-screen">
       <div className="flex justify-between items-center mb-6">
@@ -60,7 +80,7 @@ const ProductListPage = () => {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{product.category.name || product.category}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${product.price}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{product.stock}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{product.quantity}</td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span
                       className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${product.status === 'Active'
@@ -75,7 +95,7 @@ const ProductListPage = () => {
                     <div className="flex items-center space-x-2">
                       <button className="text-blue-600 hover:text-blue-900">👁</button>
                       <button className="text-yellow-600 hover:text-yellow-900">✏️</button>
-                      <button className="text-red-600 hover:text-red-900">🗑</button>
+                      <button onClick={() => deleteProduct(product.id)} className="text-red-600 hover:text-red-900">🗑</button>
                     </div>
                   </td>
                 </tr>
