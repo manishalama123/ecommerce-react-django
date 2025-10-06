@@ -76,13 +76,13 @@ export const productFormValidationSchema = yup.object().shape({
 export const CategoryValidationSchema = yup.object().shape({
   name: yup.string().required('Category name is required').min(2, 'Name must be at least 2 characters'),
   description: yup.string().nullable(),
-  image: yup.mixed()
-    .test('fileSize', 'File size too large (max 5MB)', (value) => {
-      if (!value || value.length === 0) return true;
-      return value[0].size <= 5 * 1024 * 1024;
-    })
-    .test('fileType', 'Unsupported file format', (value) => {
-      if (!value || value.length === 0) return true;
-      return ['image/jpeg', 'image/png'].includes(value[0].type);
-    }).nullable(),
+  // image: yup.mixed()
+  //   .test('fileSize', 'File size too large (max 5MB)', (value) => {
+  //     if (!value || value.length === 0) return true;
+  //     return value[0].size <= 5 * 1024 * 1024;
+  //   })
+  //   .test('fileType', 'Unsupported file format', (value) => {
+  //     if (!value || value.length === 0) return true;
+  //     return ['image/jpeg', 'image/png'].includes(value[0].type);
+  //   }).nullable(),
 })

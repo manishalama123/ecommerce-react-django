@@ -1,7 +1,9 @@
 import React from "react";
 import { Edit, Trash2, Folder } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const CategoryListCard = ({ id, name, description, products, status, created,onEdit, onDelete, onViewProducts}) => {
+  const navigate = useNavigate();
   return (
     <div className="bg-white rounded-xl shadow-md p-5 border hover:shadow-lg transition">
       {/* Title */}
@@ -41,7 +43,9 @@ const CategoryListCard = ({ id, name, description, products, status, created,onE
       <div className="flex justify-between items-center mt-4">
         <button onClick={()=>onViewProducts(id)} className="text-blue-600 hover:underline">View Products</button>
         <div className="flex gap-3">
-          <button onClick={onEdit} className="text-green-600 hover:text-green-800">
+          <button 
+          onClick={()=>navigate(`/admin/category/edit/${id}`)} 
+          className="text-green-600 hover:text-green-800">
             <Edit className="w-5 h-5" />
           </button>
           <button onClick={()=> onDelete(id)} className="text-red-600 hover:text-red-800">
