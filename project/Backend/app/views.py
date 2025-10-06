@@ -11,8 +11,8 @@ from django.shortcuts import get_object_or_404
 from rest_framework.views import APIView
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
-
-# Create your views here.
+from django.conf import settings
+import requests
 
 # list and craete category
 class CategoryListCreateView(generics.ListCreateAPIView):
@@ -64,7 +64,7 @@ class ProductRetriveDeleteUpdateView(generics.RetrieveUpdateDestroyAPIView):
             return [AllowAny()]
         return [IsAdminUser()]
 
-# generate signature
+# generate signature(FOR ESEWA)
 def generate_signature(key, message):
     key = key.encode('utf-8')
     message = message.encode('utf-8')
@@ -73,6 +73,7 @@ def generate_signature(key, message):
     signature = base64.b64encode(digest).decode('utf-8')
     return signature
 
+# PAYMENT METHODS
 class OrderCreateView(generics.CreateAPIView):
     queryset = Order.objects.all()
     serializer_class = OrderSerializers
@@ -118,9 +119,21 @@ class OrderCreateView(generics.CreateAPIView):
                 "failure_url": "https://developer.esewa.com.np/failure"
             }, status=status.HTTP_201_CREATED)
 
+        elif payment_method == "khalti":
+            order.save()
+
+            return Response({
+                "order_id": order.id,
+                "amount": int(order.total_price * 100),  # Khalti expects amount in paisa (Rs * 100)
+                "public_key": settings.KHALTI_PUBLIC_KEY,
+                "product_identity": f"ORDER-{order.id}",
+                "product_name": f"Order #{order.id}",
+
+            }, status=status.HTTP_201_CREATED)
             
         return Response({"message": "Invalid payment method"})
 
+# HANDLES ESEWA TRANSACTION
 @method_decorator(csrf_exempt, name='dispatch') 
 class EsewaSuccessAPIView(APIView):
     permission_classes = [AllowAny]
@@ -154,6 +167,56 @@ class EsewaSuccessAPIView(APIView):
         else:
             return Response({"message": f"Transaction status: {status_value}"}, status=status.HTTP_200_OK)
 
+# HANDLES KHALTI TRANSACTIONS
+@method_decorator(csrf_exempt, name='dispatch')
+class KhaltiVerifyAPIView(APIView):
+    permission_classes = [AllowAny]
+    
+    def post(self, request, *args, **kwargs):
+        token = request.data.get('token')
+        amount = request.data.get('amount')
+        order_id = request.data.get('order_id')
+        
+        if not token or not amount or not order_id:
+            return Response(
+                {"message": "Missing required fields"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        order = get_object_or_404(Order, id=order_id)
+        
+        # Verify payment with Khalti
+        url = "https://khalti.com/api/v2/payment/verify/"
+        headers = {"Authorization": f"Key {settings.KHALTI_SECRET_KEY}"}
+        payload = {
+            "token": token,
+            "amount": amount
+        }
+        
+        try:
+            response = requests.post(url, headers=headers, data=payload)
+            response_data = response.json()
+            
+            if response.status_code == 200 and response_data.get('idx'):
+                # Payment verified successfully
+                order.status = 'paid'
+                order.save()
+                return Response({
+                    "message": "Payment verified successfully",
+                    "order_id": order.id
+                }, status=status.HTTP_200_OK)
+            else:
+                return Response({
+                    "message": "Payment verification failed",
+                    "error": response_data
+                }, status=status.HTTP_400_BAD_REQUEST)
+                
+        except Exception as e:
+            return Response({
+                "message": f"Error verifying payment: {str(e)}"
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+# ORDERSORTING         
 class OrderListView(generics.ListAPIView):
     serializer_class = OrderSerializers
     permission_classes = [IsAuthenticated]

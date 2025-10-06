@@ -19,30 +19,33 @@ const CheckoutPage = () => {
   const { register, handleSubmit } = useForm();
 
   const onSubmit = async (data) => {
-    
+
     console.log("Mapped items for order:", mappedItems)
 
     // Fix: send mapped items, not raw cartItems
     const orderData = { ...data, items: mappedItems }
     console.log("Final orderData:", orderData)
-    
+
     try {
       const response = await baseRequest.post('/order/create/', orderData);
-      if(orderData.payment_method === "esewa"){
-        navigate('/esewa', {state:{esewaData: response.data}})
+      if (orderData.payment_method === "esewa") {
+        navigate('/esewa', { state: { esewaData: response.data } })
       }
-      toast.success("Order placed successfully!")
+      else if (orderData.payment_method === "khalti") {
+        navigate('/khalti', { state: { khaltiData: response.data } })
+      }
+      else {
+        toast.success("Order placed successfully!")
+        // Clear cart only after successful order
+        dispatch(clearCart())
+      }
       console.log("Success:", response.data);
-     
-      // Clear cart only after successful order
-      dispatch(clearCart())
-      
     } catch (error) {
       toast.error("Order failed!")
       console.log("❌ ERROR DATA:", error.response?.data)
     }
   }
-  
+
   return (
     <div className="my-16 px-4">
       <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8">

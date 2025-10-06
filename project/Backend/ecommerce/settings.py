@@ -32,6 +32,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'django_filters',
     'rest_framework_simplejwt',
+    'khalti',
 
     # app
     'app',
@@ -39,6 +40,10 @@ INSTALLED_APPS = [
     'cart',
     
 ]
+
+# Khalti Configuration
+KHALTI_PUBLIC_KEY = '1432c8b90b5f45998c3fde8d97bb926b'
+KHALTI_SECRET_KEY = 'b735b50cdaf04b49bfec270bb4906736'
 # For filtering
 REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
