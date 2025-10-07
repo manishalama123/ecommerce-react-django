@@ -37,7 +37,7 @@ const KhaltiCallback = () => {
       const timeout = setTimeout(() => {
         if (resData?.status === "success") {
           dispatch(clearCart());
-          navigate("/orders/list");
+          navigate("/");
         } else {
           navigate("/checkout");
         }
@@ -71,7 +71,7 @@ const KhaltiCallback = () => {
           <button
             onClick={() => {
               dispatch(clearCart());
-              navigate("/orders/list");
+              navigate("/");
             }}
             className="mt-2 bg-slate-800 hover:bg-slate-700 text-white font-semibold py-2 px-6 rounded-lg transition-colors"
           >
