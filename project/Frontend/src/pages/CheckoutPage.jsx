@@ -32,7 +32,7 @@ const CheckoutPage = () => {
         navigate('/esewa', { state: { esewaData: response.data } })
       }
       else if (orderData.payment_method === "khalti") {
-        navigate('/khalti', { state: { khaltiData: response.data } })
+        window.location.href = response.data.payment_url;
       }
       else {
         toast.success("Order placed successfully!")

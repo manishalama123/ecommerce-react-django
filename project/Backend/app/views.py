@@ -5,14 +5,14 @@ from django_filters.rest_framework import DjangoFilterBackend # type: ignore
 from rest_framework import filters
 from rest_framework.permissions import IsAdminUser,IsAuthenticated,AllowAny
 from rest_framework.response import Response
-import hmac, hashlib, base64, uuid, json
+import hmac, hashlib, base64, uuid, json, requests
 from rest_framework import status
 from django.shortcuts import get_object_or_404
 from rest_framework.views import APIView
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 from django.conf import settings
-import requests
+
 
 # list and craete category
 class CategoryListCreateView(generics.ListCreateAPIView):
@@ -122,15 +122,43 @@ class OrderCreateView(generics.CreateAPIView):
         elif payment_method == "khalti":
             order.save()
 
-            return Response({
-                "order_id": order.id,
-                "amount": int(order.total_price * 100),  # Khalti expects amount in paisa (Rs * 100)
-                "public_key": settings.KHALTI_PUBLIC_KEY,
-                "product_identity": f"ORDER-{order.id}",
-                "product_name": f"Order #{order.id}",
+            url = f"{settings.KHALTI_API_URL}epayment/initiate/"
+            headers = {
+                "Authorization": f"Key {settings.KHALTI_SECRET_KEY}",
+                "Content-Type": "application/json"
+            }
+            payload = {
+                "return_url": f"http://localhost:5173/khalti/callback",
+                "website_url": "http://localhost:5173",
+                "amount": int(order.total_price * 100),  # Amount in paisa
+                "purchase_order_id": f"ORDER-{order.id}",
+                "purchase_order_name": f"Order #{order.id}",
+                "customer_info": {
+                    "name": request.user.get_full_name() or request.user.username,
+                    "email": order.email or request.user.email,
+                    "phone": order.contact_number or "9800000000"
+                }
+            }
+            try:
+                response = requests.post(url, headers=headers, json=payload)
+                response_data = response.json()
 
-            }, status=status.HTTP_201_CREATED)
+                if response.status_code == 200:
+                    return Response({
+                        "order_id": order.id,
+                        "payment_url": response_data.get("payment_url"),
+                        "pidx": response_data.get("pidx")
+                    }, status=status.HTTP_201_CREATED)
+                else:
+                    return Response({
+                        "message": "Failed to initiate Khalti payment",
+                        "error": response_data
+                    }, status=status.HTTP_400_BAD_REQUEST)
             
+            except Exception as e:
+                return Response({
+                    "message": f"Error initiating payment: {str(e)}"
+                }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)    
         return Response({"message": "Invalid payment method"})
 
 # HANDLES ESEWA TRANSACTION
@@ -169,53 +197,58 @@ class EsewaSuccessAPIView(APIView):
 
 # HANDLES KHALTI TRANSACTIONS
 @method_decorator(csrf_exempt, name='dispatch')
-class KhaltiVerifyAPIView(APIView):
+class KhaltiCallbackAPIView(APIView):
     permission_classes = [AllowAny]
     
-    def post(self, request, *args, **kwargs):
-        token = request.data.get('token')
-        amount = request.data.get('amount')
-        order_id = request.data.get('order_id')
+    def get(self, request, *args, **kwargs):
+        # Khalti sends these parameters after payment
+        pidx = request.GET.get('pidx')
+        status_param = request.GET.get('status')
+        purchase_order_id = request.GET.get('purchase_order_id')
         
-        if not token or not amount or not order_id:
+        if not pidx:
             return Response(
-                {"message": "Missing required fields"},
+                {"message": "Missing payment identifier"},
                 status=status.HTTP_400_BAD_REQUEST
             )
         
-        order = get_object_or_404(Order, id=order_id)
-        
-        # Verify payment with Khalti
-        url = "https://khalti.com/api/v2/payment/verify/"
-        headers = {"Authorization": f"Key {settings.KHALTI_SECRET_KEY}"}
-        payload = {
-            "token": token,
-            "amount": amount
+        # Verify payment with Khalti Lookup API
+        url = f"{settings.KHALTI_API_URL}epayment/lookup/"
+        headers = {
+            "Authorization": f"Key {settings.KHALTI_SECRET_KEY}",
+            "Content-Type": "application/json"
         }
+        payload = {"pidx": pidx}
         
         try:
-            response = requests.post(url, headers=headers, data=payload)
+            response = requests.post(url, headers=headers, json=payload)
             response_data = response.json()
             
-            if response.status_code == 200 and response_data.get('idx'):
-                # Payment verified successfully
+            if response.status_code == 200 and response_data.get('status') == 'Completed':
+                # Extract order ID from purchase_order_id
+                order_id = purchase_order_id.replace('ORDER-', '')
+                order = get_object_or_404(Order, id=order_id)
+                
                 order.status = 'paid'
                 order.save()
+                
                 return Response({
                     "message": "Payment verified successfully",
-                    "order_id": order.id
+                    "order_id": order.id,
+                    "status": "success"
                 }, status=status.HTTP_200_OK)
             else:
                 return Response({
                     "message": "Payment verification failed",
-                    "error": response_data
+                    "status": response_data.get('status'),
+                    "payment_status": "failed"
                 }, status=status.HTTP_400_BAD_REQUEST)
                 
         except Exception as e:
             return Response({
                 "message": f"Error verifying payment: {str(e)}"
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
+        
 # ORDERSORTING         
 class OrderListView(generics.ListAPIView):
     serializer_class = OrderSerializers

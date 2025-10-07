@@ -13,7 +13,7 @@ urlpatterns = [
     # order
     path('order/create/', OrderCreateView.as_view(), name="order_create"),
     path('esewa/success/',EsewaSuccessAPIView.as_view(), name="esewa-sucesss"),
-    path('khalti/success/',KhaltiVerifyAPIView.as_view(), name="khalti-sucesss"),
+    path('khalti/callback/', KhaltiCallbackAPIView.as_view(), name='khalti-callback'),
     path('order/lists/',OrderListView.as_view(),name="order-list")
     
 ]

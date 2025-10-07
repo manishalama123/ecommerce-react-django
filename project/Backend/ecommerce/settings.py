@@ -44,6 +44,7 @@ INSTALLED_APPS = [
 # Khalti Configuration
 KHALTI_PUBLIC_KEY = '1432c8b90b5f45998c3fde8d97bb926b'
 KHALTI_SECRET_KEY = 'b735b50cdaf04b49bfec270bb4906736'
+KHALTI_API_URL = 'https://dev.khalti.com/api/v2/'
 # For filtering
 REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],

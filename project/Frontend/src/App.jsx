@@ -26,7 +26,7 @@ import CategoryListPage from './pages/admin/CategoryListPage';
 import AddCategoryPage from './pages/admin/AddCategoryPage';
 import EditProductPage from './pages/admin/EditProductPage';
 import EditCategoryPage from './pages/admin/EditCategoryPage';
-import KhaltiPayment from './components/KhaltiPayment';
+import KhaltiCallback from './pages/KhaltiCallback';
 
 
 function App() {
@@ -61,7 +61,7 @@ function App() {
           <Route path='/order/list' element={<OrderListPage />} />
           <Route path='/esewa' element={<EsewaForm />} />
           <Route path='/esewa/success/:id' element={<EsewaSuccessPage />} />
-          <Route path='/khalti' element={<KhaltiPayment />} />
+          <Route path='/khalti/callback' element={<KhaltiCallback />} />
         </Route>
 
       </Route>
