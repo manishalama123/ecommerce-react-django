@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import { Star, ShoppingCart, Heart } from 'lucide-react';
 import { useSelector, useDispatch } from 'react-redux';
 import { toast } from 'react-toastify';
@@ -9,8 +9,14 @@ import { addItemToCart } from '../redux/slice/cartSlice';
 import AddToCartButton from '../components/AddToCartButton';
 
 function ProductsPage() {
+  const location = useLocation();
   const dispatch = useDispatch();
   const [selectedCategory, setSelectedCategory] = useState('all');
+  useEffect(()=>{
+    if(location.state?.category){
+      setSelectedCategory(location.state.category);
+    }
+  }, [location.state]);
 
   // Fetch categories and products (keeping original structure)
   const { data: categories, isLoading: categoriesLoading } = useCategories();

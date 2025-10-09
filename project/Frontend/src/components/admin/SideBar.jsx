@@ -70,9 +70,10 @@ const SideBar = () => {
           <p className="text-gray-400 uppercase text-xs mb-2">Orders</p>
           <ul>
             <li className="mb-2">
-              <button className="flex items-center gap-2 w-full p-2 rounded-md hover:bg-gray-100">
-                <FaShoppingCart /> Order List
-              </button>
+              <Link to='orderlist' className="flex items-center gap-2 w-full p-2 rounded-md hover:bg-gray-100">
+                <FaShoppingCart /> 
+                <span className="text-sm">Order List</span>
+              </Link>
             </li>
             <li className="mb-2">
               <button className="flex items-center gap-2 w-full p-2 rounded-md hover:bg-gray-100">

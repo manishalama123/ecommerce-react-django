@@ -1,8 +1,13 @@
 import React from 'react'
 import { useCategories } from '../api/fetchApi';
+import { useNavigate } from 'react-router-dom';
 
 const CategorySection = () => {
+    const navigate = useNavigate();
     const { data: categories, isError, isLoading, error } = useCategories();
+    const handleCategoryClick = (categoryName)=>{
+        navigate('/products', {state: {category: categoryName}});
+    };
 
     return (
         <section className="my-8 px-4">
@@ -23,7 +28,9 @@ const CategorySection = () => {
                 ) : (
                     <div className="grid grid-cols-6 gap-2 md:gap-6">
                         {categories?.map((category, index) => (
-                            <div key={index} className="relative h-32 md:h-48 rounded-lg md:rounded-xl overflow-hidden cursor-pointer group shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
+                            <div key={index}
+                            onClick={()=> handleCategoryClick(category.name)}
+                             className="relative h-32 md:h-48 rounded-lg md:rounded-xl overflow-hidden cursor-pointer group shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
                                 <img
                                     src={category.image}
                                     alt={category.name}

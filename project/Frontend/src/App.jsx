@@ -27,6 +27,7 @@ import AddCategoryPage from './pages/admin/AddCategoryPage';
 import EditProductPage from './pages/admin/EditProductPage';
 import EditCategoryPage from './pages/admin/EditCategoryPage';
 import KhaltiCallback from './pages/KhaltiCallback';
+import AdminOrderListPage from './pages/admin/AdminOrderListPage';
 
 
 function App() {
@@ -73,6 +74,7 @@ function App() {
         <Route path='category/list' element={<CategoryListPage/>}/>
         <Route path='category/add' element={<AddCategoryPage/>}/>
         <Route path='category/edit/:id' element={<EditCategoryPage/>}/>
+        <Route path='orderlist' element={<AdminOrderListPage/>}/>
       </Route>
     </Routes>
     <Toaster position='top-center' />
