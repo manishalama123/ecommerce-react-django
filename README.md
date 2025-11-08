@@ -1,17 +1,44 @@
-# ecommerce-react-django
-an ecommerce web app using react and django
+# 🛒 E-Commerce Web Application
 
-python -m venv venv
-.\venv\Scripts\activate
-pip install Django
-pip install djangorestframework
-django_filter
+A full-stack e-commerce platform built with **React** (frontend) and **Django REST Framework** (backend).  
+It allows users to browse products, manage their carts, place orders, and make payments.  
+The admin can manage inventory, products, and orders from a secure dashboard.
+
+---
+
+## 🚀 Tech Stack
+
+**Frontend:**  
+- React.js  
+- Redux Toolkit  
+- Tailwind CSS / Bootstrap  
+- Axios  
+- Chart.js (for analytics and visualizations)
+
+**Backend:**  
+- Django  
+- Django REST Framework (DRF)  
+- PostgreSQL / SQLite  
+- JWT Authentication  
+- Celery + Redis (for background tasks like email notifications, order confirmation)
+
+---
+
+## ⚙️ Features
+
+### User Side
+- User authentication (signup/login/logout)
+- Product browsing and search
+- Add/remove from cart and wishlist
+- Place and track orders
+- Payment integration (Stripe/PayPal)
+- View purchase history
+
+### Admin Side
+- Add, edit, or delete products
+- Manage orders 
+
+---
 
 
-# Frontend
-npm install react-hook-form
-npm install react-hot-toast
-npm install @hookform/resolvers yup
-npm install react-slick --save
-npm install slick-carousel --save
-npm i redux-persist
+
