@@ -11,14 +11,12 @@ The admin can manage inventory, products, and orders from a secure dashboard.
 **Frontend:**  
 - React.js  
 - Redux Toolkit  
-- Tailwind CSS / Bootstrap  
+- Tailwind CSS 
 - Axios  
-- Chart.js (for analytics and visualizations)
 
 **Backend:**  
 - Django  
 - Django REST Framework (DRF)  
-- PostgreSQL / SQLite  
 - JWT Authentication  
 - Celery + Redis (for background tasks like email notifications, order confirmation)
 
